@@ -17,6 +17,8 @@
     "http": "^0.0.1-security",
     "nodemon": "^2.0.20",
     "path": "^0.12.7",
+    "redis": "^4.6.5",
+    "redis-server": "^1.2.2",
     "socket.io": "^4.5.3"
   }
 }
