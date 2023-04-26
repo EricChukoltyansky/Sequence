@@ -24,6 +24,9 @@ function Sequencer({ player, socket }) {
   const [BPMcount, setBPMCount] = useState(100);
   const [isShown, setIsShown] = useState(false);
 
+ 
+
+  
   const resetSequence = () => {
     for (let i = 0; i < sequence.length; i++) {
       for (let j = 0; j < sequence[i].length; j++) {
@@ -32,6 +35,8 @@ function Sequencer({ player, socket }) {
     }
     setSequence(sequence);
   };
+
+
 
   const stopSequence = () => {
     const sequenceCopy = [...sequence];
