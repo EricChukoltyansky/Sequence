@@ -24,8 +24,6 @@ function Sequencer({ player, socket }) {
   const [BPMcount, setBPMCount] = useState(100);
   const [isShown, setIsShown] = useState(false);
 
- 
-
   
   const resetSequence = () => {
     for (let i = 0; i < sequence.length; i++) {
@@ -72,6 +70,7 @@ function Sequencer({ player, socket }) {
 
   const handleToggleStep = (i, j) => {
     socket.emit("arm", { x: i, z: j });
+    socket.emit("sequence", { sequence: sequence });
   };
 
   const handleSetPlaying = (switcher) => {

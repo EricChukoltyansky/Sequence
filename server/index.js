@@ -3,37 +3,17 @@ const http = require("http");
 const cors = require("cors");
 const app = express();
 const { Server } = require("socket.io");
-const redis = require("redis");
+
 
 app.use(cors());
 app.use(express);
 
 const server = http.createServer(app);
 
-let redisClient = redis.createClient({
-  url: process.env.REDIS_URL,
-  port: process.env.REDIS_PORT,
-  password: process.env.REDIS_PASSWORD,
-});
-redisClient.connect();
 
-redisClient.on("connect", () => {
-  console.log("Redis client connected");
-});
 
-redisClient.on("error", (err) => {
-  console.log("Something went wrong " + err);
-});
 
-redisClient.on("message", (channel, message) => {
-  console.log("Message: " + message + " on channel: " + channel + " is arrive!");
-});
 
-redisClient.subscribe("arm");
-redisClient.subscribe("switch");
-redisClient.subscribe("rewind");
-redisClient.subscribe("clearAll");
-redisClient.subscribe("BPM");
 
 const io = new Server(server, {
   cors: {
@@ -47,6 +27,21 @@ io.on("connection", (socket) => {
 
   socket.on("arm", (armMsg) => {
     io.emit("arm", armMsg);
+  });
+
+  socket.on("sequence", (sequenceMsg) => {
+    console.log(JSON.stringify(sequenceMsg));
+
+    io.emit("sequence", sequenceMsg);
+
+    redisClient.publish("sequence", JSON.stringify(sequenceMsg));
+
+    redisClient.get("sequence", (err, reply) => {
+      console.log(reply);
+    }
+    );
+
+
   });
 
   socket.on("switch", (switchMsm) => {
