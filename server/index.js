@@ -81,6 +81,17 @@ io.on("connection", (socket) => {
 
 const PORT = process.env.PORT || 3001;
 
+app.get("/", (req, res) => {
+  redisClient.get("sequence", (err, reply) => {
+    if (err) {
+      console.log(err);
+    }
+    console.log(reply);
+    res.send(reply);
+  }
+  );
+})
+
 server.listen(PORT, () => {
   console.log("SERVER RUNNING ON PORT 3001");
 });
