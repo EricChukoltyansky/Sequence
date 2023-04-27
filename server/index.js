@@ -45,13 +45,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sequence", (sequenceMsg) => {
-    // console.log(JSON.stringify(sequenceMsg));
+    console.log(JSON.stringify(sequenceMsg));
 
     redisClient.set("sequence", JSON.stringify(sequenceMsg), (err, reply) => {
       if (err) {
         console.log(err);
       }
-      // console.log(reply);
+      console.log(reply);
     }
     );
 

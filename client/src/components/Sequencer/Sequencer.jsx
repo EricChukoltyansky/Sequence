@@ -52,6 +52,7 @@ function Sequencer({ player, socket }) {
     const { triggered, activated } = sequenceCopy[line][step];
     sequenceCopy[line][step] = { triggered, activated: !activated };
     setSequence(sequenceCopy);
+    console.log(sequenceCopy)
   };
 
   const nextStep = (time) => {
@@ -70,7 +71,7 @@ function Sequencer({ player, socket }) {
 
   const handleToggleStep = (i, j) => {
     socket.emit("arm", { x: i, z: j });
-    socket.emit("sequence", { sequence: sequence });
+    console.log(sequence)
   };
 
   const handleSetPlaying = (switcher) => {
@@ -104,6 +105,7 @@ function Sequencer({ player, socket }) {
   useEffect(() => {
     const toggleMessage = (m) => {
       toggleStep(m.x, m.z);
+      socket.emit("sequence", { sequence: sequence });
     };
     const playPauseMessage = (m) => {
       setPlaying(m.tog);
