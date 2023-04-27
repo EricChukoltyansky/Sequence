@@ -3,17 +3,32 @@ const http = require("http");
 const cors = require("cors");
 const app = express();
 const { Server } = require("socket.io");
+// const redisClient = require("./db");
+const redis = require("redis");
+const dotenv = require("dotenv");
 
+dotenv.config({ path: "./.env"});
 
 app.use(cors());
 app.use(express);
 
 const server = http.createServer(app);
 
-
-
-
-
+let redisClient = redis.createClient({
+    url: process.env.REDIS_URL,
+    port: process.env.REDIS_PORT,
+    password: process.env.REDIS_PASSWORD,
+  });
+  redisClient.connect();
+  
+  redisClient.on("connect", () => {
+    console.log("Redis client connected");
+      
+  });
+  
+  redisClient.on("error", (err) => {
+    console.log("Something went wrong " + err);
+  });
 
 const io = new Server(server, {
   cors: {
@@ -30,14 +45,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sequence", (sequenceMsg) => {
-    console.log(JSON.stringify(sequenceMsg));
+    // console.log(JSON.stringify(sequenceMsg));
 
-    io.emit("sequence", sequenceMsg);
-
-    redisClient.publish("sequence", JSON.stringify(sequenceMsg));
-
-    redisClient.get("sequence", (err, reply) => {
-      console.log(reply);
+    redisClient.set("sequence", JSON.stringify(sequenceMsg), (err, reply) => {
+      if (err) {
+        console.log(err);
+      }
+      // console.log(reply);
     }
     );
 
