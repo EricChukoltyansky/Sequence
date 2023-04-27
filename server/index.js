@@ -19,11 +19,13 @@ let redisClient = redis.createClient({
     port: process.env.REDIS_PORT,
     password: process.env.REDIS_PASSWORD,
   });
-  redisClient.connect();
+
+  (async () => {
+    await redisClient.connect();
+  })();
   
   redisClient.on("connect", () => {
-    console.log("Redis client connected");
-      
+    console.log("Redis client connected"); 
   });
   
   redisClient.on("error", (err) => {
@@ -54,8 +56,6 @@ io.on("connection", (socket) => {
       console.log(reply);
     }
     );
-
-
   });
 
   socket.on("switch", (switchMsm) => {
