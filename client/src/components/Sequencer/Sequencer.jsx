@@ -15,6 +15,7 @@ import InstructionsButton from "../buttons/InstructionsButton";
 import Instructions from "../Instructions/Instructions";
 import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
+import axios from "axios";
 
 function Sequencer({ player, socket }) {
   const [sequence, setSequence] = useState(initialState);
@@ -24,24 +25,21 @@ function Sequencer({ player, socket }) {
   const [BPMcount, setBPMCount] = useState(100);
   const [isShown, setIsShown] = useState(false);
 
-  
   const resetSequence = () => {
     for (let i = 0; i < sequence.length; i++) {
       for (let j = 0; j < sequence[i].length; j++) {
-          sequence[i][j] = { activated: false, triggered: false };
+        sequence[i][j] = { activated: false, triggered: false };
       }
     }
     setSequence(sequence);
   };
-
-
 
   const stopSequence = () => {
     const sequenceCopy = [...sequence];
     for (let i = 0; i < sequenceCopy.length; i++) {
       for (let j = 0; j < sequenceCopy[i].length; j++) {
         const { activated } = sequenceCopy[i][j];
-          sequenceCopy[i][j] = {activated, triggered: false };
+        sequenceCopy[i][j] = { activated, triggered: false };
       }
     }
     setSequence(sequenceCopy);
@@ -52,7 +50,6 @@ function Sequencer({ player, socket }) {
     const { triggered, activated } = sequenceCopy[line][step];
     sequenceCopy[line][step] = { triggered, activated: !activated };
     setSequence(sequenceCopy);
-    console.log(sequenceCopy)
   };
 
   const nextStep = (time) => {
@@ -71,7 +68,6 @@ function Sequencer({ player, socket }) {
 
   const handleToggleStep = (i, j) => {
     socket.emit("arm", { x: i, z: j });
-    console.log(sequence)
   };
 
   const handleSetPlaying = (switcher) => {
@@ -101,6 +97,13 @@ function Sequencer({ player, socket }) {
   const handlePowerOff = () => {
     setSequencerVolume(-12);
   };
+
+  useEffect(() => {
+    axios.get("http://localhost:3001/").then((res) => {
+      console.log();
+      // setSequence(res);
+    });
+  }, []);
 
   useEffect(() => {
     const toggleMessage = (m) => {
@@ -187,7 +190,7 @@ function Sequencer({ player, socket }) {
         />
       </NavBar>
       <RightBar />
-      <Icons/>
+      <Icons />
       <Braces />
       <Grid
         sequence={sequence}
