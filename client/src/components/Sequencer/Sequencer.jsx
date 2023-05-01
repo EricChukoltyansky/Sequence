@@ -15,7 +15,7 @@ import InstructionsButton from "../buttons/InstructionsButton";
 import Instructions from "../Instructions/Instructions";
 import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
-import axios from "axios";
+// import axios from "axios";
 
 function Sequencer({ player, socket }) {
   const [sequence, setSequence] = useState(initialState);
@@ -98,12 +98,19 @@ function Sequencer({ player, socket }) {
     setSequencerVolume(-12);
   };
 
-  useEffect(() => {
-    axios.get("http://localhost:3001/").then((res) => {
-      console.log();
-      // setSequence(res);
-    });
-  }, []);
+  // async function getReply() {
+  //   try {
+  //     const reply = await axios.get("http://localhost:3001");
+  //     console.log(reply);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //     getReply();
+  // }, []);
+
 
   useEffect(() => {
     const toggleMessage = (m) => {
@@ -197,7 +204,12 @@ function Sequencer({ player, socket }) {
         handleToggleStep={handleToggleStep}
         handleStopPlaying={handleStopPlaying}
       />
-      {isShown && <Instructions />}
+      {isShown && <div>
+        <h1>?Instructions?</h1>
+        <p>
+          Hello
+        </p>
+        </div>}
     </div>
   );
 }

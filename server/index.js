@@ -3,8 +3,8 @@ const http = require("http");
 const cors = require("cors");
 const app = express();
 const { Server } = require("socket.io");
-// const redisClient = require("./db");
 const redis = require("redis");
+const redisAdapter = require("socket.io-redis");
 const dotenv = require("dotenv");
 
 dotenv.config({ path: "./.env"});
@@ -14,24 +14,6 @@ app.use(express);
 
 const server = http.createServer(app);
 
-let redisClient = redis.createClient({
-    url: process.env.REDIS_URL,
-    port: process.env.REDIS_PORT,
-    password: process.env.REDIS_PASSWORD,
-  });
-
-  (async () => {
-    await redisClient.connect();
-  })();
-  
-  redisClient.on("connect", () => {
-    console.log("Redis client connected"); 
-  });
-  
-  redisClient.on("error", (err) => {
-    console.log("Something went wrong " + err);
-  });
-
 const io = new Server(server, {
   cors: {
     origin: "*",
@@ -39,59 +21,83 @@ const io = new Server(server, {
   },
 });
 
-io.on("connection", (socket) => {
-  console.log("User Connected", socket.id);
+const pubClient = redis.createClient({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+  password: process.env.REDIS_PASSWORD,
+});
+
+const subClient = pubClient.duplicate();
+
+io.adapter(redisAdapter({ pubClient, subClient }));
+
+// Create 4 rooms
+const room1 = io.of("/room1");
+const room2 = io.of("/room2");
+const room3 = io.of("/room3");
+const room4 = io.of("/room4");
+
+// Create 4 redis clients
+
+const roomEventListeners = (socket, roomName) => {
+  console.log(`User Connected to ${roomName}`, socket.id);
 
   socket.on("arm", (armMsg) => {
-    io.emit("arm", armMsg);
+    io.to(roomName).emit("arm", armMsg);
   });
 
   socket.on("sequence", (sequenceMsg) => {
-    console.log(JSON.stringify(sequenceMsg));
-
-    redisClient.set("sequence", JSON.stringify(sequenceMsg), (err, reply) => {
+    redisClient.set(`sequence:${roomName}`, JSON.stringify(sequenceMsg), (err, reply) => {
       if (err) {
         console.log(err);
       }
-      console.log(reply);
-    }
-    );
+    });
   });
 
   socket.on("switch", (switchMsm) => {
-    io.emit("switch", switchMsm);
+    io.to(roomName).emit("switch", switchMsm);
   });
 
   socket.on("rewind", () => {
-    io.emit("rewind");
+    io.to(roomName).emit("rewind");
   });
 
   socket.on("clearAll", (clearAllMsg) => {
-    io.emit("clearAll", clearAllMsg);
+    io.to(roomName).emit("clearAll", clearAllMsg);
   });
 
   socket.on("BPM", (BPMmessage) => {
-    io.emit("BPM", BPMmessage);
+    io.to(roomName).emit("BPM", BPMmessage);
   });
 
   socket.on("disconnect", () => {
-    console.log("User Disconnected", socket.id);
+    console.log(`User Disconnected from ${roomName}`, socket.id);
   });
+}
+
+room1.on("connection", (socket) => {
+  roomEventListeners(socket, "room1");
+});
+
+room2.on("connection", (socket) => {
+  roomEventListeners(socket, "room2");
+});
+
+room3.on("connection", (socket) => {
+  roomEventListeners(socket, "room3");
+});
+
+room4.on("connection", (socket) => {
+  roomEventListeners(socket, "room4");
 });
 
 const PORT = process.env.PORT || 3001;
 
-app.get("/", (req, res) => {
-  redisClient.get("sequence", (err, reply) => {
-    if (err) {
-      console.log(err);
-    }
-    console.log(reply);
-    res.send(reply);
-  }
-  );
-})
-
 server.listen(PORT, () => {
-  console.log("SERVER RUNNING ON PORT 3001");
+  console.log(`SERVER RUNNING ON PORT ${PORT}`);
 });
+
+  
+
+
+
