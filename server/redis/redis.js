@@ -1,27 +1,9 @@
-const express = require("express");
-const http = require("http");
-const cors = require("cors");
-const app = express();
-const { Server } = require("socket.io");
 const { createClient } = require("redis");
 const { createAdapter } = require("@socket.io/redis-adapter");
-const connectDB = require("./db/db");
+const { io } = require("../index");
 const dotenv = require("dotenv");
 
-dotenv.config({ path: "./.env"});
-
-connectDB();
-app.use(cors());
-app.use(express);
-
-const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"],
-  },
-});
+dotenv.config({ path: "./.env" });
 
 const pubClient = createClient({
   host: process.env.REDIS_HOST,
@@ -49,11 +31,15 @@ const roomEventListeners = (socket, roomName) => {
   });
 
   socket.on("sequence", (sequenceMsg) => {
-    redisClient.set(`sequence:${roomName}`, JSON.stringify(sequenceMsg), (err, reply) => {
-      if (err) {
-        console.log(err);
+    redisClient.set(
+      `sequence:${roomName}`,
+      JSON.stringify(sequenceMsg),
+      (err, reply) => {
+        if (err) {
+          console.log(err);
+        }
       }
-    });
+    );
   });
 
   socket.on("switch", (switchMsm) => {
@@ -75,26 +61,6 @@ const roomEventListeners = (socket, roomName) => {
   socket.on("disconnect", () => {
     console.log(`User Disconnected from ${roomName}`, socket.id);
   });
-}
+};
 
-room1.on("connection", (socket) => {
-  roomEventListeners(socket, "room1");
-});
-
-room2.on("connection", (socket) => {
-  roomEventListeners(socket, "room2");
-});
-
-room3.on("connection", (socket) => {
-  roomEventListeners(socket, "room3");
-});
-
-room4.on("connection", (socket) => {
-  roomEventListeners(socket, "room4");
-});
-
-const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, () => {
-  console.log(`SERVER RUNNING ON PORT ${PORT}`);
-});
+module.exports = {roomEventListeners, room1, room2, room3, room4, server};
