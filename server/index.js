@@ -3,8 +3,8 @@ const http = require("http");
 const cors = require("cors");
 const app = express();
 const { Server } = require("socket.io");
-const redis = require("redis");
-const redisAdapter = require("socket.io-redis");
+const { createClient } = require("redis");
+const { createAdapter } = require("@socket.io/redis-adapter");
 const dotenv = require("dotenv");
 
 dotenv.config({ path: "./.env"});
@@ -21,7 +21,7 @@ const io = new Server(server, {
   },
 });
 
-const pubClient = redis.createClient({
+const pubClient = createClient({
   host: process.env.REDIS_HOST,
   port: process.env.REDIS_PORT,
   password: process.env.REDIS_PASSWORD,
@@ -29,7 +29,7 @@ const pubClient = redis.createClient({
 
 const subClient = pubClient.duplicate();
 
-io.adapter(redisAdapter({ pubClient, subClient }));
+io.adapter(createAdapter(pubClient, subClient));
 
 // Create 4 rooms
 const room1 = io.of("/room1");
