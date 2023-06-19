@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { steps, lineMap, initialState } from "./initial";
 import Grid from "./Grid";
 import NavBar from "../NavBar/NavBar";
@@ -15,6 +15,8 @@ import InstructionsButton from "../buttons/InstructionsButton";
 import Instructions from "../Instructions/Instructions";
 import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
+import Login from "../Login/Login/Login";
+import LoginRegisterButton from "../buttons/LoginRegister";
 
 function Sequencer({ player, socket }) {
   const [sequence, setSequence] = useState(initialState);
@@ -22,12 +24,15 @@ function Sequencer({ player, socket }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [sequencerVolume, setSequencerVolume] = useState(-12);
   const [BPMcount, setBPMCount] = useState(100);
-  const [isShown, setIsShown] = useState(false);
+  const [isShownInstructions, setIsShownInstructions] = useState(false);
+  const [isShownLogin, setIsShownLogin] = useState(false);
+
+  const loginRef = useRef();
 
   const resetSequence = () => {
     for (let i = 0; i < sequence.length; i++) {
       for (let j = 0; j < sequence[i].length; j++) {
-          sequence[i][j] = { activated: false, triggered: false };
+        sequence[i][j] = { activated: false, triggered: false };
       }
     }
     setSequence(sequence);
@@ -38,7 +43,7 @@ function Sequencer({ player, socket }) {
     for (let i = 0; i < sequenceCopy.length; i++) {
       for (let j = 0; j < sequenceCopy[i].length; j++) {
         const { activated } = sequenceCopy[i][j];
-          sequenceCopy[i][j] = {activated, triggered: false };
+        sequenceCopy[i][j] = { activated, triggered: false };
       }
     }
     setSequence(sequenceCopy);
@@ -67,7 +72,7 @@ function Sequencer({ player, socket }) {
 
   const handleToggleStep = (i, j) => {
     socket.emit("arm", { x: i, z: j });
-    socket.emit("sequence", { sequence })
+    socket.emit("sequence", { sequence });
   };
 
   const handleSetPlaying = (switcher) => {
@@ -135,10 +140,21 @@ function Sequencer({ player, socket }) {
       }
     }, BPMcount);
 
+    const handleClickOutside = (event) => {
+      if (loginRef.current && !loginRef.current.contains(event.target)) {
+        setIsShownLogin(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       clearTimeout(timer);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [currentStep, playing, BPMcount, sequence]);
+  }, [currentStep, playing, BPMcount, sequence, loginRef]);
+
+  useEffect(() => {}, [loginRef]);
 
   return (
     <div className="Sequencer">
@@ -177,19 +193,21 @@ function Sequencer({ player, socket }) {
         />
 
         <InstructionsButton
-          onMouseEnter={() => setIsShown(true)}
-          onMouseLeave={() => setIsShown(false)}
+          onMouseEnter={() => setIsShownInstructions(true)}
+          onMouseLeave={() => setIsShownInstructions(false)}
         />
+        <LoginRegisterButton onMouseEnter={() => setIsShownLogin(true)} />
       </NavBar>
       <RightBar />
-      <Icons/>
+      <Icons />
       <Braces />
       <Grid
         sequence={sequence}
         handleToggleStep={handleToggleStep}
         handleStopPlaying={handleStopPlaying}
       />
-      {isShown && <Instructions />}
+      {isShownInstructions && <Instructions />}
+      {isShownLogin && <Login ref={loginRef} />}
     </div>
   );
 }
