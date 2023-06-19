@@ -12,6 +12,7 @@ const Button = styled.button`
   transition: 0.2s ease-in-out;
   font-family: "Fuzzy Bubbles", cursive;
   cursor: pointer;
+  margin-left: 10px;
 
   &:hover {
     color: #000;
@@ -21,10 +22,10 @@ const Button = styled.button`
   }
 `;
 
-function LoginRegisterButton({ onMouseEnter, onMouseLeave }) {
+function LoginRegisterButton({ onClick }) {
   return (
     <>
-      <Button onClick={onMouseEnter}>Login/Register</Button>
+      <Button onClick={onClick}>Login/Register</Button>
     </>
   );
 }

@@ -15,7 +15,7 @@ import InstructionsButton from "../buttons/InstructionsButton";
 import Instructions from "../Instructions/Instructions";
 import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
-import Login from "../Login/Login/Login";
+import AuthForm from "../Login/Login/AuthForm";
 import LoginRegisterButton from "../buttons/LoginRegister";
 
 function Sequencer({ player, socket }) {
@@ -26,8 +26,23 @@ function Sequencer({ player, socket }) {
   const [BPMcount, setBPMCount] = useState(100);
   const [isShownInstructions, setIsShownInstructions] = useState(false);
   const [isShownLogin, setIsShownLogin] = useState(false);
+  const [isShownRegister, setIsShownRegister] = useState(false);
 
   const loginRef = useRef();
+  const registerRef = useRef();
+
+  const handleLoginRegisterClick = () => {
+    setIsShownLogin(true);
+    if (isShownLogin) {
+      setIsShownLogin(false);
+      setIsShownRegister(true);
+    } else if (isShownRegister) {
+      setIsShownRegister(false);
+      setIsShownLogin(true);
+    }
+  };
+
+  console.log("isShownLogin", isShownLogin);
 
   const resetSequence = () => {
     for (let i = 0; i < sequence.length; i++) {
@@ -144,6 +159,9 @@ function Sequencer({ player, socket }) {
       if (loginRef.current && !loginRef.current.contains(event.target)) {
         setIsShownLogin(false);
       }
+      if (registerRef.current && !registerRef.current.contains(event.target)) {
+        setIsShownRegister(false);
+      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -152,9 +170,7 @@ function Sequencer({ player, socket }) {
       clearTimeout(timer);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [currentStep, playing, BPMcount, sequence, loginRef]);
-
-  useEffect(() => {}, [loginRef]);
+  }, [currentStep, playing, BPMcount, sequence, loginRef, registerRef]);
 
   return (
     <div className="Sequencer">
@@ -196,7 +212,7 @@ function Sequencer({ player, socket }) {
           onMouseEnter={() => setIsShownInstructions(true)}
           onMouseLeave={() => setIsShownInstructions(false)}
         />
-        <LoginRegisterButton onMouseEnter={() => setIsShownLogin(true)} />
+        <LoginRegisterButton onClick={handleLoginRegisterClick} />
       </NavBar>
       <RightBar />
       <Icons />
@@ -207,7 +223,20 @@ function Sequencer({ player, socket }) {
         handleStopPlaying={handleStopPlaying}
       />
       {isShownInstructions && <Instructions />}
-      {isShownLogin && <Login ref={loginRef} />}
+      {isShownLogin && (
+        <AuthForm
+          mode="login"
+          ref={loginRef}
+          onToggleMode={handleLoginRegisterClick}
+        />
+      )}
+      {isShownRegister && (
+        <AuthForm
+          mode="register"
+          ref={registerRef}
+          onToggleMode={handleLoginRegisterClick}
+        />
+      )}
     </div>
   );
 }
