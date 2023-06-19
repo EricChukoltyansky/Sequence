@@ -22,41 +22,19 @@ const io = new Server(server, {
   },
 });
 
-let pubClient = createClient(process.env.REDIS_URL);
-
-pubClient.on("ready", () => {
-  console.log("Redis is ready");
-});
-
-pubClient.on("connect", () => {
-  console.log("Connected to Redis");
-});
-
-pubClient.on("error", (err) => {
-  console.log("ERRRRRRRRRRRRRRRRRRRRRRRRRRRRR");
-  console.log("Error " + err);
-});
-
-pubClient.on("end", () => {
-  console.log("Redis connection closed");
-});
-
-pubClient.on("reconnecting", () => {
-  console.log("Redis reconnecting");
-});
-
-pubClient.on("warning", () => {
-  console.log("Redis warning");
-});
-
-pubClient.on("end", () => {
-  console.log("Redis connection closed, starting a new one...");
-  pubClient = createClient(process.env.REDIS_URL);
+let pubClient = createClient({
+  password: process.env.REDIS_PASSWORD,
+  socket: {
+    host: process.env.REDIS_HOST,
+    port: process.env.REDIS_PORT,
+  },
 });
 
 const subClient = pubClient.duplicate();
 
-io.adapter(createAdapter(pubClient, subClient));
+Promise.all([pubClient.connect(), subClient.connect()]).then(() => {
+  io.adapter(createAdapter(pubClient, subClient));
+});
 
 // Create 4 rooms
 const room1 = io.of("/room1");
@@ -72,7 +50,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("sequence", (sequenceMsg) => {
-    pubClient.set(`sequence:/`, JSON.stringify(sequenceMsg), (err, reply) => {
+    pubClient.set(`sequence`, JSON.stringify(sequenceMsg), (err, reply) => {
       if (err) {
         console.log(err);
       }

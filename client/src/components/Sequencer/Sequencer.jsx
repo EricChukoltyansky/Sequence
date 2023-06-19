@@ -67,6 +67,7 @@ function Sequencer({ player, socket }) {
 
   const handleToggleStep = (i, j) => {
     socket.emit("arm", { x: i, z: j });
+    socket.emit("sequence", { sequence })
   };
 
   const handleSetPlaying = (switcher) => {
