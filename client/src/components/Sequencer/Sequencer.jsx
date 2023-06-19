@@ -15,7 +15,6 @@ import InstructionsButton from "../buttons/InstructionsButton";
 import Instructions from "../Instructions/Instructions";
 import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
-// import axios from "axios";
 
 function Sequencer({ player, socket }) {
   const [sequence, setSequence] = useState(initialState);
@@ -28,7 +27,7 @@ function Sequencer({ player, socket }) {
   const resetSequence = () => {
     for (let i = 0; i < sequence.length; i++) {
       for (let j = 0; j < sequence[i].length; j++) {
-        sequence[i][j] = { activated: false, triggered: false };
+          sequence[i][j] = { activated: false, triggered: false };
       }
     }
     setSequence(sequence);
@@ -39,7 +38,7 @@ function Sequencer({ player, socket }) {
     for (let i = 0; i < sequenceCopy.length; i++) {
       for (let j = 0; j < sequenceCopy[i].length; j++) {
         const { activated } = sequenceCopy[i][j];
-        sequenceCopy[i][j] = { activated, triggered: false };
+          sequenceCopy[i][j] = {activated, triggered: false };
       }
     }
     setSequence(sequenceCopy);
@@ -98,24 +97,9 @@ function Sequencer({ player, socket }) {
     setSequencerVolume(-12);
   };
 
-  // async function getReply() {
-  //   try {
-  //     const reply = await axios.get("http://localhost:3001");
-  //     console.log(reply);
-  //   } catch (err) {
-  //     console.log(err);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //     getReply();
-  // }, []);
-
-
   useEffect(() => {
     const toggleMessage = (m) => {
       toggleStep(m.x, m.z);
-      socket.emit("sequence", { sequence: sequence });
     };
     const playPauseMessage = (m) => {
       setPlaying(m.tog);
@@ -197,19 +181,14 @@ function Sequencer({ player, socket }) {
         />
       </NavBar>
       <RightBar />
-      <Icons />
+      <Icons/>
       <Braces />
       <Grid
         sequence={sequence}
         handleToggleStep={handleToggleStep}
         handleStopPlaying={handleStopPlaying}
       />
-      {isShown && <div>
-        <h1>?Instructions?</h1>
-        <p>
-          Hello
-        </p>
-        </div>}
+      {isShown && <Instructions />}
     </div>
   );
 }
