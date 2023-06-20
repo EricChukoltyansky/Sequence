@@ -1,6 +1,7 @@
 import React from "react";
-import { useState } from "react";
+import { useContext } from "react";
 import styled from "styled-components";
+import { UserContext } from "../../context/UserProvider";
 
 const Container = styled.div`
   height: 400px;
@@ -56,6 +57,19 @@ const StyledButton = styled.input`
 `;
 
 const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
+  const userContext = useContext(UserContext);
+  const { user, setUser } = userContext;
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setUser((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  console.log(user);
+
   return (
     <div ref={ref}>
       <Container>
@@ -65,17 +79,32 @@ const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
         <StyledForm>
           <StyledLabel>
             Username
-            <StyledInput type="text" name="username" />
+            <StyledInput
+              type="text"
+              name="username"
+              value={user.username}
+              onChange={handleInputChange}
+            />
           </StyledLabel>
           {mode === "register" && (
             <StyledLabel>
               Email
-              <StyledInput type="email" name="email" />
+              <StyledInput
+                type="email"
+                name="email"
+                value={user.email}
+                onChange={handleInputChange}
+              />
             </StyledLabel>
           )}
           <StyledLabel>
             Password
-            <StyledInput type="password" name="password" />
+            <StyledInput
+              type="password"
+              name="password"
+              value={user.password}
+              onChange={handleInputChange}
+            />
           </StyledLabel>
           <StyledButton
             type="button"
