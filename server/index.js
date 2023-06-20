@@ -6,11 +6,14 @@ const { Server } = require("socket.io");
 const { createClient } = require("redis");
 const { createAdapter } = require("@socket.io/redis-adapter");
 const dotenv = require("dotenv");
+const connectDB = require("./config/db");
 
 dotenv.config({ path: "./.env" });
 
 app.use(cors());
 app.use(express.json());
+
+connectDB();
 
 const server = http.createServer(app);
 
@@ -126,8 +129,9 @@ for (let room of [io, room1, room2, room3, room4]) {
   });
 }
 
-app.get("/", (req, res) => {
-  res.send("Server is running");
+app.post("/users", (req, res) => {
+  console.log(req.body);
+  res.json("User Created");
 });
 
 const PORT = process.env.PORT || 3001;
