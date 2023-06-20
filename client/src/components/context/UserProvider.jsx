@@ -11,10 +11,18 @@ export default function UserProvider({ children }) {
     isLoggedIn: false,
   });
 
-  console.log(user)
+  const submitForm = async () => {
+    const response = await fetch("/users", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(user),
+    });
+    const data = await response.json();
+    console.log(data);
+  }
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, submitForm }}>
       {children}
     </UserContext.Provider>
   );

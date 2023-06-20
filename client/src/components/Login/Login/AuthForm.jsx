@@ -58,7 +58,7 @@ const StyledButton = styled.input`
 
 const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
   const userContext = useContext(UserContext);
-  const { user, setUser } = userContext;
+  const { user, setUser, submitForm } = userContext;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -68,7 +68,10 @@ const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
     }));
   };
 
-  console.log(user);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    submitForm();
+  };
 
   return (
     <div ref={ref}>
@@ -111,7 +114,7 @@ const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
             value={mode === "login" ? "Register" : "Login"}
             onClick={onToggleMode}
           />
-          <StyledButton type="submit" value={"Submit"} />
+          <StyledButton type="submit" value={"Submit"} onClick={handleSubmit} />
         </StyledForm>
       </Container>
     </div>
