@@ -40,6 +40,7 @@ const StyledInput = styled.input`
   padding: 10px;
   border-radius: 5px;
   border: none;
+  margin-left: 10px;
 `;
 
 const StyledButton = styled.input`
@@ -63,17 +64,17 @@ const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
         </h1>
         <StyledForm>
           <StyledLabel>
-            Username:
+            Username
             <StyledInput type="text" name="username" />
           </StyledLabel>
           {mode === "register" && (
             <StyledLabel>
-              Email:
+              Email
               <StyledInput type="email" name="email" />
             </StyledLabel>
           )}
           <StyledLabel>
-            Password:
+            Password
             <StyledInput type="password" name="password" />
           </StyledLabel>
           <StyledButton

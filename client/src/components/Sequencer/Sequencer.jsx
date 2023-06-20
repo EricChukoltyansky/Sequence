@@ -42,8 +42,6 @@ function Sequencer({ player, socket }) {
     }
   };
 
-  console.log("isShownLogin", isShownLogin);
-
   const resetSequence = () => {
     for (let i = 0; i < sequence.length; i++) {
       for (let j = 0; j < sequence[i].length; j++) {
