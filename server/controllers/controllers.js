@@ -1,7 +1,7 @@
 const User = require("../models/UserModel");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 
-exports.register = async (req, res) => {
+const register = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
@@ -10,11 +10,12 @@ exports.register = async (req, res) => {
 
     res.status(201).json({ message: "User created successfully" });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ err: "Error creating user" });
   }
 };
 
-exports.login = async (req, res) => {
+const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -32,6 +33,10 @@ exports.login = async (req, res) => {
       res.status(200).json({ message: "User logged in successfully" });
     }
   } catch (err) {
+    console.error(err);
     res.status(500).json({ err: "Error logging in user" });
   }
 };
+
+exports.login = login;
+exports.register = register;

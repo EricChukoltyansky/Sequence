@@ -44,6 +44,14 @@ const StyledInput = styled.input`
   margin-left: 10px;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+`;
+
 const StyledButton = styled.input`
   padding: 10px 20px;
   border-radius: 5px;
@@ -58,7 +66,8 @@ const StyledButton = styled.input`
 
 const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
   const userContext = useContext(UserContext);
-  const { user, setUser, submitForm } = userContext;
+  const { user, setUser, submitForm, backendUserResponse, isMessageShown } =
+    userContext;
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -70,7 +79,7 @@ const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    submitForm();
+    submitForm(mode);
   };
 
   return (
@@ -109,13 +118,31 @@ const AuthForm = React.forwardRef(({ mode, onToggleMode }, ref) => {
               onChange={handleInputChange}
             />
           </StyledLabel>
-          <StyledButton
-            type="button"
-            value={mode === "login" ? "Register" : "Login"}
-            onClick={onToggleMode}
-          />
-          <StyledButton type="submit" value={"Submit"} onClick={handleSubmit} />
+          <ButtonContainer>
+            <p>
+              {mode === "login"
+                ? "Don't have an account?"
+                : "Already have an account?"}
+            </p>
+            <div>
+              <StyledButton
+                type="button"
+                value={mode === "login" ? "Register" : "Login"}
+                onClick={onToggleMode}
+              />
+              <StyledButton
+                type="submit"
+                value={"Submit"}
+                onClick={handleSubmit}
+              />
+            </div>
+          </ButtonContainer>
         </StyledForm>
+        {isMessageShown && backendUserResponse && (
+          <p style={{ color: "#fff" }}>
+            {backendUserResponse.message || backendUserResponse.err}
+          </p>
+        )}
       </Container>
     </div>
   );

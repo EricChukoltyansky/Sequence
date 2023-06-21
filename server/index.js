@@ -8,6 +8,8 @@ const { createAdapter } = require("@socket.io/redis-adapter");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 
+const { register, login } = require("./controllers/controllers");
+
 dotenv.config({ path: "./.env" });
 
 app.use(cors());
@@ -129,10 +131,8 @@ for (let room of [io, room1, room2, room3, room4]) {
   });
 }
 
-app.post("/users", (req, res) => {
-  console.log(req.body);
-  res.json("User Created");
-});
+app.post("/login", login);
+app.post("/register", register);
 
 const PORT = process.env.PORT || 3001;
 
