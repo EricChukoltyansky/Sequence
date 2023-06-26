@@ -58,6 +58,7 @@ const StyledButton = styled.input`
   border: none;
   background-color: #4caf50;
   color: white;
+  margin: 10px;
   cursor: pointer;
   &:hover {
     background-color: #45a049;
