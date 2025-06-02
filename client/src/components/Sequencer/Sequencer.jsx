@@ -17,6 +17,7 @@ import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
 import AuthForm from "../Login/Login/AuthForm";
 import LoginRegisterButton from "../buttons/LoginRegister";
+import StepIndicator from "./StepIndicator";
 
 function Sequencer({ player, socket }) {
   const [sequence, setSequence] = useState(initialState);
@@ -207,6 +208,7 @@ function Sequencer({ player, socket }) {
       <RightBar />
       <Icons />
       <Braces />
+      <StepIndicator totalSteps={16} currentStep={currentStep} />
       <Grid
         sequence={sequence}
         handleToggleStep={handleToggleStep}

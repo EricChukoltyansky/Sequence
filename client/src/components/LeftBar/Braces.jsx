@@ -1,67 +1,78 @@
 import React from "react";
 import styled from "styled-components";
+import { theme, helpers } from "../../theme";
 
-const Bar = styled.div`
-  height: calc(100vh - 75px);
+const BraceBar = styled.div`
+  height: calc(100vh - 80px);
   right: calc(100vw - 70px);
   display: flex;
   justify-content: space-around;
   align-items: center;
   flex-direction: column;
   position: absolute;
+  z-index: ${theme.zIndex.base};
 `;
 
-const Piano = styled.div`
+const BraceSection = styled.div`
+  width: calc(7vw - 35px);
+  border-left: 2px solid;
+  border-top: 2px solid;
+  border-bottom: 2px solid;
+  border-top-left-radius: ${theme.borderRadius.xl};
+  border-bottom-left-radius: ${theme.borderRadius.xl};
+  position: absolute;
+  left: 160%;
+  transition: all ${theme.transitions.normal};
+
+  &::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: ${(props) => helpers.glow(props.color, 10)};
+  }
+
+  &:hover {
+    transform: translateX(-2px);
+    box-shadow: ${(props) => helpers.glow(props.color, 15)};
+  }
+`;
+
+const PianoBrace = styled(BraceSection)`
   height: 37.5%;
-  width: calc(7vw - 35px);
   top: 0.2%;
-  left: 160%;
-  border-left: 1px solid white;
-  border-top: 1px solid white;
-  border-bottom: 1px solid white;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-color: #dbaf0e;
-  filter: drop-shadow(0px 0px 2px #dbaf0e);
-  position: absolute;
+  border-color: ${theme.colors.tracks.piano.primary};
+  color: ${theme.colors.tracks.piano.primary};
+  filter: drop-shadow(0px 0px 4px ${theme.colors.tracks.piano.primary});
 `;
 
-const Bass = styled.div`
+const BassBrace = styled(BraceSection)`
   height: 30.5%;
-  width: calc(7vw - 35px);
   top: 38.5%;
-  left: 160%;
-  border-left: 1px solid white;
-  border-top: 1px solid white;
-  border-bottom: 1px solid white;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-color: #0abb07;
-  filter: drop-shadow(0px 0px 2px #0abb07);
-  position: absolute;
+  border-color: ${theme.colors.tracks.bass.primary};
+  color: ${theme.colors.tracks.bass.primary};
+  filter: drop-shadow(0px 0px 4px ${theme.colors.tracks.bass.primary});
 `;
 
-const Drums = styled.div`
+const DrumsBrace = styled(BraceSection)`
   height: 30%;
-  width: calc(7vw - 35px);
   top: 69.8%;
-  left: 160%;
-  border-left: 1px solid white;
-  border-top: 1px solid white;
-  border-bottom: 1px solid white;
-  border-top-left-radius: 20px;
-  border-bottom-left-radius: 20px;
-  border-color: #1272e7;
-  filter: drop-shadow(0px 0px 2px #1272e7);
-  position: absolute;
+  border-color: ${theme.colors.tracks.drums.primary};
+  color: ${theme.colors.tracks.drums.primary};
+  filter: drop-shadow(0px 0px 4px ${theme.colors.tracks.drums.primary});
 `;
 
 export default function Braces() {
   return (
-    <Bar>
-      <Piano />
-      <Bass />
-      <Drums />
-    </Bar>
+    <BraceBar>
+      <PianoBrace color={theme.colors.tracks.piano.primary} />
+      <BassBrace color={theme.colors.tracks.bass.primary} />
+      <DrumsBrace color={theme.colors.tracks.drums.primary} />
+    </BraceBar>
   );
 }
