@@ -1,3 +1,6 @@
+// 🎯 REPLACE: client/src/components/Sequencer/Sequencer.jsx
+// Complete rearranged and enhanced Sequencer component
+
 import React, { useState, useEffect, useRef } from "react";
 import { steps, lineMap, initialState } from "./initial";
 import Grid from "./Grid";
@@ -9,7 +12,6 @@ import BPM from "../sliders/BPM";
 import PowerOn from "../buttons/PowerOn";
 import ClearAllButton from "../buttons/ClearAllButton";
 import PowerOff from "../buttons/PowerOff";
-import "./Sequencer.css";
 import RightBar from "../RightBar/RightBar";
 import InstructionsButton from "../buttons/InstructionsButton";
 import Instructions from "../Instructions/Instructions";
@@ -18,6 +20,7 @@ import Braces from "../LeftBar/Braces";
 import AuthForm from "../Login/Login/AuthForm";
 import LoginRegisterButton from "../buttons/LoginRegister";
 import StepIndicator from "./StepIndicator";
+import "./Sequencer.css";
 
 function Sequencer({ player, socket }) {
   const [sequence, setSequence] = useState(initialState);
@@ -106,7 +109,7 @@ function Sequencer({ player, socket }) {
   };
 
   const handleBPM = (e) => {
-    setBPMCount(e.target.value); // Add this line
+    setBPMCount(e.target.value);
     socket.emit("BPM", { value: e.target.value });
   };
 
@@ -174,7 +177,8 @@ function Sequencer({ player, socket }) {
 
   return (
     <div className="Sequencer">
-      <NavBar>
+      {/* Enhanced Navigation Bar */}
+      <NavBar connected={true}>
         <PlayButton
           playing={playing}
           onClick={() => handleSetPlaying(!playing)}
@@ -205,18 +209,37 @@ function Sequencer({ player, socket }) {
         <InstructionsButton onClick={() => setIsShownInstructions(true)} />
         <LoginRegisterButton onClick={handleLoginRegisterClick} />
       </NavBar>
-      <RightBar />
-      <Icons />
-      <Braces />
-      <StepIndicator totalSteps={16} currentStep={currentStep} />
-      <Grid
-        sequence={sequence}
-        handleToggleStep={handleToggleStep}
-        handleStopPlaying={handleStopPlaying}
-      />
+
+      {/* Main Sequencer Content */}
+      <div className="sequencer-content">
+        {/* Step Indicator */}
+        <div className="step-indicator-wrapper">
+          <StepIndicator totalSteps={16} currentStep={currentStep} />
+        </div>
+
+        {/* Grid Container with Side Panels */}
+        <div className="grid-container">
+          {/* Left Side - Track Icons */}
+          <Icons />
+          <Braces />
+
+          {/* Main Grid */}
+          <Grid
+            sequence={sequence}
+            handleToggleStep={handleToggleStep}
+            handleStopPlaying={handleStopPlaying}
+          />
+
+          {/* Right Side - Track Labels */}
+          <RightBar />
+        </div>
+      </div>
+
+      {/* Modal Overlays */}
       {isShownInstructions && (
         <Instructions onClose={() => setIsShownInstructions(false)} />
       )}
+
       {isShownLogin && (
         <AuthForm
           mode="login"
@@ -224,6 +247,7 @@ function Sequencer({ player, socket }) {
           onToggleMode={handleLoginRegisterClick}
         />
       )}
+
       {isShownRegister && (
         <AuthForm
           mode="register"
