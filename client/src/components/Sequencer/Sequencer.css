@@ -38,16 +38,15 @@ Complete updated CSS with new layout structure
 }
 
 /* 
-🎯 REPLACE: client/src/components/Sequencer/Sequencer.css 
-Complete updated CSS with new layout structure - FIXED
+🎯 VERTICAL NAVBAR LAYOUT - Full Screen Grid
 */
 
 .Sequencer {
   height: 100vh;
   width: 100vw;
-  background: #0f0f0f;
+  background: #1c1c1e;
 
-  /* Subtle dot pattern background - same as loader */
+  /* Keep the nice dot pattern */
   background-image: radial-gradient(
     circle at 1px 1px,
     rgba(255, 255, 255, 0.08) 1px,
@@ -55,73 +54,12 @@ Complete updated CSS with new layout structure - FIXED
   );
   background-size: 20px 20px;
 
+  /* Full screen layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
-}
-
-.Sequencer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  /* Optional: Add a very subtle vignette effect */
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-  pointer-events: none;
-  z-index: 1;
-}
-
-/* ============================================================================
-   NEW LAYOUT STRUCTURE
-   ============================================================================ */
-
-.sequencer-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  height: calc(100vh - 80px);
-  padding: 1.5rem;
-  position: relative;
-  z-index: 2;
-  justify-content: flex-start;
-}
-
-.step-indicator-wrapper {
-  width: 75vw;
-  margin: 0 auto;
-  position: relative;
-  z-index: 3;
-  display: flex;
-  justify-content: center;
-}
-
-.grid-container {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  flex: 1;
-  max-width: 100vw;
-}
-
-/* Mobile responsive layout */
-@media (max-width: 768px) {
-  .sequencer-content {
-    padding: 0.5rem;
-    height: calc(100vh - 60px);
-  }
-
-  .step-indicator-wrapper {
-    width: 95vw;
-    margin-bottom: 0.5rem;
-  }
 }
 
 .seqContainer {
@@ -130,8 +68,6 @@ Complete updated CSS with new layout structure - FIXED
   justify-content: center;
   align-items: center;
   flex-direction: row;
-  position: relative;
-  z-index: 2;
 }
 
 /* ============================================================================
