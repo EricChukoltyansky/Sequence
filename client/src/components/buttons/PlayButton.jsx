@@ -1,33 +1,90 @@
-import React from "react";
+
 import styled from "styled-components";
-// import { CiPlay1, CiPause1 } from "react-icons/ci";
 import { IoPlayOutline, IoPauseOutline } from "react-icons/io5";
+import { theme, helpers } from "../../theme";
 
-const Play = styled.button`
-  color: #0abb07;
+const TransportButton = styled.button`
+  /* Base button styling */
+  width: ${theme.components.transport.size};
+  height: ${theme.components.transport.size};
+  border-radius: 50%;
   border: none;
-  background-color: transparent;
-  font-size: 2em;
-  transition: all 0.2s;
-  filter: drop-shadow(0px 0px 1px #0abb07);
+  position: relative;
+  cursor: pointer;
+  overflow: hidden;
 
-  &:hover {
-    filter: drop-shadow(0px 0px 4px #0abb07);
-    cursor: pointer;
+  /* Modern glassmorphism background */
+  ${helpers.glassmorphism()}
+
+  /* Icon styling */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: ${theme.components.transport.iconSize};
+
+  /* Smooth transitions */
+  ${helpers.transition("all", theme.transitions.normal)}
+
+  /* Focus for accessibility */
+  ${helpers.focus()}
+  
+  /* Hover effects */
+  ${helpers.hover(`
+    transform: translateY(-2px) scale(1.05);
+    ${helpers.glassmorphism("rgba(255, 255, 255, 0.08)")}
+  `)}
+  
+  /* Active state */
+  &:active {
+    transform: translateY(0) scale(0.95);
+  }
+
+  /* Ripple effect */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+  }
+
+  &:active::before {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Mobile responsive */
+  ${theme.media.mobile} {
+    width: calc(${theme.components.transport.size} * 0.8);
+    height: calc(${theme.components.transport.size} * 0.8);
+    font-size: calc(${theme.components.transport.iconSize} * 0.8);
   }
 `;
 
-const Pause = styled.button`
-  color: #922c2c;
-  border: none;
-  background-color: transparent;
-  font-size: 2em;
-  transition: all 0.2s;
-  filter: drop-shadow(0px 0px 1px #922c2c);
+const PlayButtonStyled = styled(TransportButton)`
+  color: ${theme.colors.transport.play};
+  box-shadow: ${theme.shadows.md},
+    ${helpers.glow(theme.colors.transport.play, 8)};
 
   &:hover {
-    filter: drop-shadow(0px 0px 4px #922c2c);
-    cursor: pointer;
+    box-shadow: ${theme.shadows.lg},
+      ${helpers.glow(theme.colors.transport.play, 15)};
+  }
+`;
+
+const PauseButtonStyled = styled(TransportButton)`
+  color: ${theme.colors.transport.pause};
+  box-shadow: ${theme.shadows.md},
+    ${helpers.glow(theme.colors.transport.pause, 8)};
+
+  &:hover {
+    box-shadow: ${theme.shadows.lg},
+      ${helpers.glow(theme.colors.transport.pause, 15)};
   }
 `;
 
@@ -35,13 +92,13 @@ export default function PlayButton({ playing, onClick }) {
   return (
     <>
       {playing ? (
-        <Pause onClick={onClick}>
+        <PauseButtonStyled onClick={onClick} aria-label="Pause sequencer">
           <IoPauseOutline />
-        </Pause>
+        </PauseButtonStyled>
       ) : (
-        <Play onClick={onClick}>
+        <PlayButtonStyled onClick={onClick} aria-label="Play sequencer">
           <IoPlayOutline />
-        </Play>
+        </PlayButtonStyled>
       )}
     </>
   );
