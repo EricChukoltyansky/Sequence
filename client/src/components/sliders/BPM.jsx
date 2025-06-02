@@ -7,7 +7,8 @@ const BPMSliderContainer = styled.div`
   width: 120px;
   height: 40px;
   display: flex;
-  align-items: center;
+  align-items: center; /* Centers slider vertically */
+  justify-content: center;
   margin: ${theme.spacing.md};
 
   ${theme.media.mobile} {
@@ -18,7 +19,7 @@ const BPMSliderContainer = styled.div`
 
 const BPMSliderLabel = styled.label`
   position: absolute;
-  top: -20px;
+  top: -18px; /* Moved closer to slider */
   left: 0;
   font-family: ${theme.typography.fontFamily.primary};
   font-size: ${theme.typography.fontSize.xs};
@@ -122,7 +123,7 @@ const BPMSlider = styled.input`
 
 const BPMValue = styled.div`
   position: absolute;
-  top: -20px;
+  top: -18px; /* Moved to same level as label */
   right: 0;
   font-family: ${theme.typography.fontFamily.mono};
   font-size: ${theme.typography.fontSize.xs};

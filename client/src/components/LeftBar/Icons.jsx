@@ -6,7 +6,7 @@ import { theme, helpers } from "../../theme";
 
 const IconBar = styled.div`
   height: calc(100vh - 80px);
-  right: calc(100vw - 50px);
+  right: calc(100vw - 30px); /* Moved closer to the grid */
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -17,7 +17,7 @@ const IconBar = styled.div`
   z-index: ${theme.zIndex.base};
 
   ${theme.media.mobile} {
-    right: calc(100vw - 40px);
+    right: calc(100vw - 25px);
     font-size: 20px;
   }
 `;

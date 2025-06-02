@@ -19,7 +19,7 @@ import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
 import AuthForm from "../Login/Login/AuthForm";
 import LoginRegisterButton from "../buttons/LoginRegister";
-import StepIndicator from "./StepIndicator";
+// import StepIndicator from "./StepIndicator";
 import "./Sequencer.css";
 
 function Sequencer({ player, socket }) {
@@ -212,10 +212,10 @@ function Sequencer({ player, socket }) {
 
       {/* Main Sequencer Content */}
       <div className="sequencer-content">
-        {/* Step Indicator */}
+        {/* Step Indicator
         <div className="step-indicator-wrapper">
           <StepIndicator totalSteps={16} currentStep={currentStep} />
-        </div>
+        </div> */}
 
         {/* Grid Container with Side Panels */}
         <div className="grid-container">

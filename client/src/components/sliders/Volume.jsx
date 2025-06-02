@@ -7,7 +7,8 @@ const SliderContainer = styled.div`
   width: 120px;
   height: 40px;
   display: flex;
-  align-items: center;
+  align-items: center; /* This centers the slider vertically */
+  justify-content: center; /* This centers everything */
   margin: ${theme.spacing.md};
 
   ${theme.media.mobile} {
@@ -18,7 +19,7 @@ const SliderContainer = styled.div`
 
 const SliderLabel = styled.label`
   position: absolute;
-  top: -10px;
+  top: -18px; /* Moved closer to slider */
   left: 0;
   font-family: ${theme.typography.fontFamily.primary};
   font-size: ${theme.typography.fontSize.xs};
@@ -130,7 +131,7 @@ const VolumeSlider = styled.input`
 
 const VolumeValue = styled.div`
   position: absolute;
-  top: -20px;
+  top: -18px; /* Moved to same level as label */
   right: 0;
   font-family: ${theme.typography.fontFamily.mono};
   font-size: ${theme.typography.fontSize.xs};
