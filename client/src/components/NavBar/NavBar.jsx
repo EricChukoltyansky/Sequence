@@ -1,3 +1,4 @@
+// client/src/components/NavBar/NavBar.jsx - Vertical Right-Side Version
 import React from "react";
 import styled from "styled-components";
 import { theme, helpers } from "../../theme";
