@@ -10,18 +10,15 @@ const IconsContainer = styled.div`
   left: 20px;
   top: 0;
   bottom: 0;
-  width: 60px;
+  width: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  gap: ${theme.spacing["2xl"]};
-  z-index: ${theme.zIndex.base + 1};
+  z-index: ${theme.zIndex.base + 2};
 
   ${theme.media.mobile} {
-    left: 10px;
-    width: 50px;
-    gap: ${theme.spacing.xl};
+    left: 15px;
+    width: 90px;
   }
 `;
 
@@ -29,64 +26,81 @@ const IconGroup = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: ${theme.spacing.sm};
   padding: ${theme.spacing.lg};
-  border-radius: ${theme.borderRadius.xl};
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: ${theme.borderRadius["2xl"]};
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
   transition: all ${theme.transitions.normal};
   position: relative;
 
-  /* Height to match the brace sections */
+  /* Height to match brace sections proportionally */
   &:nth-child(1) {
-    height: auto;
-  } /* Piano */
+    flex: 5; /* Piano - 5 tracks */
+    margin-bottom: ${theme.spacing.md};
+  }
   &:nth-child(2) {
-    height: auto;
-  } /* Bass */
+    flex: 4; /* Bass - 4 tracks */
+    margin-bottom: ${theme.spacing.md};
+  }
   &:nth-child(3) {
-    height: auto;
-  } /* Drums */
+    flex: 4; /* Drums - 4 tracks */
+  }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.08);
-    transform: scale(1.05);
+    background: linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.06) 100%
+    );
+    transform: scale(1.05) translateX(5px);
     border-color: ${(props) => props.color}60;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+      0 0 20px ${(props) => props.color}30;
   }
 
   ${theme.media.mobile} {
     padding: ${theme.spacing.md};
+    border-radius: ${theme.borderRadius.xl};
   }
 `;
 
 const InstrumentIcon = styled.div`
-  font-size: 2rem;
+  font-size: 2.5rem;
   color: ${(props) => props.color};
-  filter: drop-shadow(0 0 8px ${(props) => props.color}40);
+  filter: drop-shadow(0 0 12px ${(props) => props.color}60);
   transition: all ${theme.transitions.normal};
 
   &:hover {
-    transform: scale(1.1);
-    filter: drop-shadow(0 0 15px ${(props) => props.color}80);
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 0 20px ${(props) => props.color}80);
   }
 
   ${theme.media.mobile} {
-    font-size: 1.5rem;
+    font-size: 2rem;
   }
 `;
 
 const InstrumentLabel = styled.span`
   font-family: ${theme.typography.fontFamily.primary};
-  font-size: ${theme.typography.fontSize.xs};
-  font-weight: ${theme.typography.fontWeight.medium};
+  font-size: ${theme.typography.fontSize.sm};
+  font-weight: ${theme.typography.fontWeight.semibold};
   color: ${(props) => props.color};
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 1px;
   text-align: center;
-  opacity: 0.8;
+  text-shadow: 0 0 10px ${(props) => props.color}50;
+  opacity: 0.9;
 
   ${theme.media.mobile} {
-    font-size: 10px;
+    font-size: ${theme.typography.fontSize.xs};
+    letter-spacing: 0.5px;
   }
 `;
 

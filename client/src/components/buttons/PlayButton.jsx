@@ -1,4 +1,3 @@
-
 import styled from "styled-components";
 import { IoPlayOutline, IoPauseOutline } from "react-icons/io5";
 import { theme, helpers } from "../../theme";

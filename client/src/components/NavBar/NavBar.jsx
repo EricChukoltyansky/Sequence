@@ -1,182 +1,123 @@
-// 🎯 REPLACE: client/src/components/NavBar/NavBar.jsx
-// Enhanced navbar with cool visual effects
-
 import React from "react";
 import styled from "styled-components";
 import { theme, helpers } from "../../theme";
 
 const NavBarContainer = styled.div`
-  width: 100%;
-  height: 80px;
+  position: fixed;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 120px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  gap: ${theme.spacing.lg};
-  padding: 0 ${theme.spacing.xl};
-  position: relative;
+  padding: ${theme.spacing.xl} ${theme.spacing.md};
   z-index: ${theme.zIndex.sticky};
 
-  /* Modern glassmorphism background with dot pattern */
+  /* Modern glassmorphism background */
   background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.05) 0%,
-    rgba(255, 255, 255, 0.02) 100%
+    180deg,
+    rgba(255, 255, 255, 0.03) 0%,
+    rgba(255, 255, 255, 0.01) 100%
   );
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid ${theme.colors.glass.border};
+  border-left: 1px solid ${theme.colors.glass.border};
 
-  /* Same dot pattern as main background but more subtle */
-  background-image: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.05) 0%,
-      rgba(255, 255, 255, 0.02) 100%
-    ),
-    radial-gradient(
-      circle at 1px 1px,
-      rgba(255, 255, 255, 0.04) 1px,
-      transparent 0
-    );
-  background-size: auto, 15px 15px;
-
-  /* Animated gradient top border */
+  /* Subtle left border glow */
   &::before {
     content: "";
     position: absolute;
     top: 0;
+    bottom: 0;
     left: 0;
-    right: 0;
-    height: 2px;
+    width: 1px;
     background: linear-gradient(
-      90deg,
+      180deg,
       transparent 0%,
-      ${theme.colors.tracks.piano.primary} 20%,
+      ${theme.colors.tracks.piano.primary} 25%,
       ${theme.colors.tracks.bass.primary} 50%,
-      ${theme.colors.tracks.drums.primary} 80%,
+      ${theme.colors.tracks.drums.primary} 75%,
       transparent 100%
     );
-    background-size: 200% 100%;
-    animation: shimmer 4s ease-in-out infinite;
+    opacity: 0.3;
   }
 
-  @keyframes shimmer {
-    0%,
-    100% {
-      background-position: -200% 0;
-      opacity: 0.3;
-    }
-    50% {
-      background-position: 200% 0;
-      opacity: 0.8;
-    }
-  }
-
-  /* Subtle bottom glow */
-  &::after {
-    content: "";
-    position: absolute;
-    bottom: -1px;
-    left: 10%;
-    right: 10%;
-    height: 1px;
-    background: linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.1) 50%,
-      transparent 100%
-    );
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
-  }
-
-  /* Mobile responsive */
   ${theme.media.mobile} {
-    height: 60px;
-    gap: ${theme.spacing.sm};
-    padding: 0 ${theme.spacing.md};
-    flex-wrap: wrap;
-    justify-content: space-between;
-
-    background-size: auto, 12px 12px;
+    width: 100px;
+    padding: ${theme.spacing.lg} ${theme.spacing.sm};
   }
 
   /* Animation on mount */
-  animation: slideDown 0.8s ease-out;
+  animation: slideInFromRight 0.6s ease-out;
 
-  @keyframes slideDown {
+  @keyframes slideInFromRight {
     from {
-      transform: translateY(-100%);
+      transform: translateX(100%);
       opacity: 0;
     }
     to {
-      transform: translateY(0);
+      transform: translateX(0);
       opacity: 1;
     }
   }
 `;
 
+const ControlsContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: ${theme.spacing.xl};
+  width: 100%;
+
+  ${theme.media.mobile} {
+    gap: ${theme.spacing.lg};
+  }
+`;
+
 const ControlGroup = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: ${theme.spacing.md};
+  gap: ${theme.spacing.lg};
 
   /* Transport controls group */
   &.transport {
-    background: rgba(255, 255, 255, 0.03);
-    padding: ${theme.spacing.sm};
+    background: rgba(255, 255, 255, 0.02);
+    padding: ${theme.spacing.lg} ${theme.spacing.sm};
     border-radius: ${theme.borderRadius.xl};
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: all ${theme.transitions.normal};
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.12);
-      transform: translateY(-1px);
-    }
+    border: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   /* Settings group */
   &.settings {
-    background: rgba(255, 255, 255, 0.03);
-    padding: ${theme.spacing.sm};
+    background: rgba(255, 255, 255, 0.02);
+    padding: ${theme.spacing.lg} ${theme.spacing.sm};
     border-radius: ${theme.borderRadius.xl};
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: all ${theme.transitions.normal};
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.05);
-      border-color: rgba(255, 255, 255, 0.12);
-      transform: translateY(-1px);
-    }
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    width: 100%;
+    align-items: center;
   }
 
   ${theme.media.mobile} {
-    gap: ${theme.spacing.sm};
-
-    &.transport {
-      order: 1;
-      flex: 1;
-      justify-content: center;
-    }
-
-    &.settings {
-      order: 2;
-      flex: 1;
-      justify-content: space-around;
-    }
+    gap: ${theme.spacing.md};
+    padding: ${theme.spacing.md} ${theme.spacing.xs};
   }
 `;
 
 const BrandSection = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: ${theme.spacing.md};
+  gap: ${theme.spacing.sm};
+  margin-bottom: ${theme.spacing.xl};
+  position: sticky;
+  top: 0;
 
   ${theme.media.mobile} {
-    order: 0;
-    width: 100%;
-    justify-content: center;
-    margin-bottom: ${theme.spacing.sm};
+    margin-bottom: ${theme.spacing.lg};
+    gap: ${theme.spacing.xs};
   }
 `;
 
@@ -195,8 +136,11 @@ const Logo = styled.div`
   -webkit-text-fill-color: transparent;
   background-clip: text;
   letter-spacing: -0.02em;
-  cursor: default;
-  user-select: none;
+  text-align: center;
+
+  /* Keep logo upright and centered */
+  transform: none;
+  writing-mode: normal;
 
   ${theme.media.mobile} {
     font-size: ${theme.typography.fontSize.lg};
@@ -210,10 +154,11 @@ const StatusIndicator = styled.div`
   font-family: ${theme.typography.fontFamily.mono};
   font-size: ${theme.typography.fontSize.xs};
   color: ${theme.colors.text.secondary};
-  background: rgba(255, 255, 255, 0.03);
-  padding: 4px 8px;
-  border-radius: ${theme.borderRadius.md};
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  text-align: center;
+
+  /* Keep status upright and centered */
+  transform: none;
+  white-space: nowrap;
 
   &::before {
     content: "";
@@ -246,7 +191,33 @@ const StatusIndicator = styled.div`
 
   ${theme.media.mobile} {
     font-size: 10px;
-    padding: 2px 6px;
+  }
+`;
+
+// Wrapper for rotated sliders
+const RotatedSliderContainer = styled.div`
+  transform: rotate(90deg);
+  transform-origin: center;
+  width: 120px;
+  height: 40px;
+  margin: 50px 0; /* Account for rotation and spacing */
+
+  ${theme.media.mobile} {
+    width: 80px;
+    height: 30px;
+    margin: 40px 0;
+  }
+`;
+
+// Wrapper for buttons to keep them upright
+const ButtonContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing.md};
+  align-items: center;
+
+  ${theme.media.mobile} {
+    gap: ${theme.spacing.sm};
   }
 `;
 
@@ -254,24 +225,43 @@ const NavBar = ({ children, connected = true }) => {
   // Extract different types of children for organized layout
   const childrenArray = React.Children.toArray(children);
 
+  // Separate buttons from sliders
+  const buttons = childrenArray.filter((child, index) => index < 4); // First 4 are buttons
+  const sliders = childrenArray.filter(
+    (child, index) => index >= 4 && index < 6
+  ); // Next 2 are sliders
+  const otherControls = childrenArray.filter((child, index) => index >= 6); // Remaining controls
+
   return (
     <NavBarContainer>
+      {/* Top section - Logo and Status (kept upright and centered) */}
       <BrandSection>
         <Logo>Sequencer</Logo>
         <StatusIndicator connected={connected}>
-          {connected ? "Connected" : "Disconnected"}
+          {connected ? "Connected" : "Offline"}
         </StatusIndicator>
       </BrandSection>
 
-      <ControlGroup className="transport">
-        {/* Transport controls will be automatically detected and placed here */}
-        {childrenArray.filter((child, index) => index < 4)}
-      </ControlGroup>
+      {/* Main controls section */}
+      <ControlsContainer>
+        <ControlGroup className="transport">
+          <ButtonContainer>{buttons}</ButtonContainer>
+        </ControlGroup>
 
-      <ControlGroup className="settings">
-        {/* Settings controls (sliders, etc.) */}
-        {childrenArray.filter((child, index) => index >= 4)}
-      </ControlGroup>
+        <ControlGroup className="settings">
+          {/* Rotate sliders 90 degrees */}
+          {sliders.map((slider, index) => (
+            <RotatedSliderContainer key={index}>
+              {slider}
+            </RotatedSliderContainer>
+          ))}
+        </ControlGroup>
+
+        {/* Other controls at bottom */}
+        <ControlGroup className="other">
+          <ButtonContainer>{otherControls}</ButtonContainer>
+        </ControlGroup>
+      </ControlsContainer>
     </NavBarContainer>
   );
 };

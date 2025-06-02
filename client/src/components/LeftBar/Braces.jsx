@@ -5,18 +5,18 @@ import { theme, helpers } from "../../theme";
 
 const BracesContainer = styled.div`
   position: absolute;
-  left: 80px; /* Position after the icons */
+  left: 160px; /* Move closer to grid */
   top: 0;
   bottom: 0;
-  width: 120px;
+  width: 140px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   z-index: ${theme.zIndex.base + 1};
 
   ${theme.media.mobile} {
-    left: 60px;
-    width: 80px;
+    left: 120px;
+    width: 100px;
   }
 `;
 
@@ -35,42 +35,53 @@ const Brace = styled.div`
   left: 0;
   top: 0;
   bottom: 0;
-  width: 4px;
+  width: 6px;
+
+  /* Create artistic curved brace */
   background: linear-gradient(
     to bottom,
     transparent 0%,
-    ${(props) => props.color} 10%,
-    ${(props) => props.color} 90%,
+    ${(props) => props.color}20 5%,
+    ${(props) => props.color} 15%,
+    ${(props) => props.color} 85%,
+    ${(props) => props.color}20 95%,
     transparent 100%
   );
-  border-radius: 2px;
+  border-radius: 3px;
 
-  /* Top bracket */
+  /* Top curved bracket */
   &::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
-    width: 20px;
-    height: 2px;
+    width: 30px;
+    height: 20px;
     background: ${(props) => props.color};
-    border-radius: 1px;
+    border-radius: 0 0 15px 3px;
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 50%);
   }
 
-  /* Bottom bracket */
+  /* Bottom curved bracket */
   &::after {
     content: "";
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 20px;
-    height: 2px;
+    width: 30px;
+    height: 20px;
     background: ${(props) => props.color};
-    border-radius: 1px;
+    border-radius: 3px 15px 0 0;
+    clip-path: polygon(0 50%, 85% 0, 100% 100%, 0 100%);
   }
 
-  /* Glow effect */
-  filter: drop-shadow(0 0 4px ${(props) => props.color}40);
+  /* Enhanced glow effect */
+  filter: drop-shadow(0 0 8px ${(props) => props.color}50);
+
+  /* Subtle animation */
+  &:hover {
+    filter: drop-shadow(0 0 12px ${(props) => props.color}70);
+  }
 `;
 
 const NotesContainer = styled.div`
@@ -78,7 +89,7 @@ const NotesContainer = styled.div`
   flex-direction: column;
   justify-content: space-around;
   height: 100%;
-  padding-left: 30px;
+  padding-left: 40px;
   gap: ${theme.spacing.xs};
 `;
 
@@ -88,26 +99,30 @@ const NoteLabel = styled.div`
   font-weight: ${theme.typography.fontWeight.medium};
   color: ${(props) => props.color};
   text-align: left;
-  padding: ${theme.spacing.xs} ${theme.spacing.sm};
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid ${(props) => props.color}30;
-  border-radius: ${theme.borderRadius.sm};
+  padding: ${theme.spacing.xs} ${theme.spacing.md};
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid ${(props) => props.color}40;
+  border-radius: ${theme.borderRadius.md};
 
-  /* Subtle glow effect */
-  text-shadow: 0 0 8px ${(props) => props.color}40;
-  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.05);
+  /* Artistic styling */
+  backdrop-filter: blur(5px);
+  text-shadow: 0 0 10px ${(props) => props.color}50;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.08),
+    0 2px 8px ${(props) => props.color}20;
 
-  transition: all ${theme.transitions.fast};
+  transition: all ${theme.transitions.normal};
 
   &:hover {
-    background: ${(props) => props.color}10;
-    border-color: ${(props) => props.color}60;
-    transform: translateX(2px);
+    background: ${(props) => props.color}15;
+    border-color: ${(props) => props.color}70;
+    transform: translateX(4px) scale(1.02);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.12),
+      0 4px 16px ${(props) => props.color}40;
   }
 
   ${theme.media.mobile} {
     font-size: ${theme.typography.fontSize.xs};
-    padding: 2px 4px;
+    padding: 4px 8px;
   }
 `;
 
