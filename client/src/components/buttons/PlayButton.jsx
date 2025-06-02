@@ -6,7 +6,10 @@ const TransportButton = styled.button`
   /* Base button styling */
   width: ${theme.components.transport.size};
   height: ${theme.components.transport.size};
-  border-radius: 50%;
+  border-radius: ${(props) =>
+    props.isActive
+      ? theme.borderRadius.md
+      : "50%"}; /* Square when active, round when inactive */
   border: none;
   position: relative;
   cursor: pointer;
@@ -33,29 +36,13 @@ const TransportButton = styled.button`
     ${helpers.glassmorphism("rgba(255, 255, 255, 0.08)")}
   `)}
   
-  /* Active state */
-  &:active {
-    transform: translateY(0) scale(0.95);
-  }
-
-  /* Ripple effect */
-  &::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-  }
-
-  &:active::before {
-    width: 100%;
-    height: 100%;
-  }
+  /* Active state styling */
+  ${(props) =>
+    props.isActive &&
+    `
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(0.95);
+  `}
 
   /* Mobile responsive */
   ${theme.media.mobile} {
@@ -91,11 +78,19 @@ export default function PlayButton({ playing, onClick }) {
   return (
     <>
       {playing ? (
-        <PauseButtonStyled onClick={onClick} aria-label="Pause sequencer">
+        <PauseButtonStyled
+          onClick={onClick}
+          aria-label="Pause sequencer"
+          isActive={true}
+        >
           <IoPauseOutline />
         </PauseButtonStyled>
       ) : (
-        <PlayButtonStyled onClick={onClick} aria-label="Play sequencer">
+        <PlayButtonStyled
+          onClick={onClick}
+          aria-label="Play sequencer"
+          isActive={false}
+        >
           <IoPlayOutline />
         </PlayButtonStyled>
       )}

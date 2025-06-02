@@ -8,7 +8,7 @@ const NavBarContainer = styled.div`
   right: 0;
   top: 0;
   bottom: 0;
-  width: 120px;
+  width: 138px;
   display: flex;
   flex-direction: column;
   align-items: center;

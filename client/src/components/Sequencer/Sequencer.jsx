@@ -43,6 +43,12 @@ const MainContent = styled.div`
   display: flex;
   position: relative;
   min-height: 0; /* Allow flex shrinking */
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
 `;
 
 const SequencerGrid = styled.div`

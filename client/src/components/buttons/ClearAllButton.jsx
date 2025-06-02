@@ -1,4 +1,3 @@
-// client/src/components/buttons/ClearAllButton.jsx - Modernized Version
 import React from "react";
 import styled from "styled-components";
 import { IoTrashOutline } from "react-icons/io5";
@@ -8,7 +7,10 @@ const ClearButtonStyled = styled.button`
   /* Base button styling */
   width: ${theme.components.transport.size};
   height: ${theme.components.transport.size};
-  border-radius: 50%;
+  border-radius: ${(props) =>
+    props.isActive
+      ? theme.borderRadius.md
+      : "50%"}; /* Square when active, round when inactive */
   border: none;
   position: relative;
   cursor: pointer;
@@ -43,29 +45,13 @@ const ClearButtonStyled = styled.button`
     color: ${theme.colors.status.warning};
   `)}
   
-  /* Active state */
-  &:active {
-    transform: translateY(0) scale(0.95);
-  }
-
-  /* Ripple effect */
-  &::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(244, 67, 54, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-  }
-
-  &:active::before {
-    width: 100%;
-    height: 100%;
-  }
+  /* Active state styling */
+  ${(props) =>
+    props.isActive &&
+    `
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(0.95);
+  `}
 
   /* Mobile responsive */
   ${theme.media.mobile} {
@@ -75,8 +61,12 @@ const ClearButtonStyled = styled.button`
   }
 `;
 
-const ClearAllButton = ({ onClick }) => (
-  <ClearButtonStyled onClick={onClick} aria-label="Clear all patterns">
+const ClearAllButton = ({ onClick, isActive = false }) => (
+  <ClearButtonStyled
+    onClick={onClick}
+    aria-label="Clear all patterns"
+    isActive={isActive}
+  >
     <IoTrashOutline />
   </ClearButtonStyled>
 );
