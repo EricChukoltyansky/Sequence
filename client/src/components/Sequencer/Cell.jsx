@@ -1,40 +1,59 @@
 import styled from "styled-components";
+import { theme, helpers } from "../../theme";
 
 const getBackground = (activated, triggered, row) => {
+  const trackColor = helpers.getTrackColor(row);
+
   switch (true) {
     case activated && triggered:
-      return "radial-gradient(#f8b6b6, #922c2c)";
+      return `
+      background: linear-gradient(135deg, ${trackColor.primary}, ${trackColor.secondary});
+      animation: cellPulse 0.5s ease-in-out;
+      `;
     case activated && !triggered:
-      if(row <= 5) {
-        return "radial-gradient(#f3e775, #dbaf0e)";
-      } else if( row > 5 && row <= 9 ) {
-        return "radial-gradient(#5fed9f, #0abb07)";
-      } else {
-        return "radial-gradient(#2dcaed, #1d12e7)";
-      }
+      return `
+        background: linear-gradient(135deg, ${trackColor.background}, ${theme.colors.tertiary});
+        border: 2px solid ${trackColor.primary};
+      `;
     case !activated && triggered:
-      return "rgb(158, 156, 156)";
+      return `
+        background: linear-gradient(135deg, ${theme.colors.secondary}, ${theme.colors.tertiary});
+        border: 2px solid ${theme.colors.borderLight};
+      `;
     default:
-      return "rgb(41,40,40)";
+      return `
+        background: linear-gradient(135deg, ${theme.colors.primary}, ${theme.colors.secondary});
+        border: 1px solid ${theme.colors.border};
+      `;
   }
 };
 
 const getBoxShadow = (activated, triggered, row) => {
+  const trackColor = helpers.getTrackColor(row);
+
   switch (true) {
     case activated && triggered:
-      return "0 0 100px 50px #922c2c";
+      return `
+        ${helpers.glow(trackColor.primary, 25)},
+        inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      `;
     case activated && !triggered:
-      if(row <= 5) {
-        return "0 0 20px 5px #dbaf0e";
-      } else if( row > 5 && row <= 9 ) {
-        return "0 0 20px 5px #0abb07";
-      } else {
-        return "0 0 20px 5px #1d12e7";
-      }
-      case !activated && triggered:
-        return "0 0 3px 1px rgb(212, 212, 212)";
+      return `
+        ${helpers.glow(trackColor.primary, 10)},
+        inset 0 1px 2px rgba(255, 255, 255, 0.05);
+      `;
+    case !activated && triggered:
+      return `
+        0 2px 8px rgba(0, 0, 0, 0.3),
+        inset 0 1px 2px rgba(255, 255, 255, 0.05);
+      `;
+
     default:
-      return "none";
+      // Default - minimal shadow for depth
+      return `
+        0 1px 3px rgba(0, 0, 0, 0.2),
+        inset 0 1px 1px rgba(255, 255, 255, 0.03);
+      `;
   }
 };
 
@@ -53,24 +72,166 @@ const getBorder = (activated, triggered) => {
 
 const Cell = styled.div.attrs(({ activated, triggered, row }) => ({
   style: {
-    background: getBackground(activated, triggered, row),
-    boxShadow: getBoxShadow(activated, triggered, row),
-    border: getBorder(activated, triggered)
+    // Dynamic styles are set via CSS-in-JS for better performance
   },
 }))`
-  border-radius: 4px;
+  /* Base cell styling */
+  width: ${theme.components.cell.size};
+  height: ${theme.components.cell.size};
+  border-radius: ${theme.borderRadius.lg};
   grid-column: ${(props) => props.column};
   grid-row: ${(props) => props.row};
-  margin: 5px;
-  transition: all 0.1s;
+  margin: ${theme.spacing.xs};
+  position: relative;
+  cursor: pointer;
+  user-select: none;
 
+  /* Dynamic background and shadows */
+  ${(props) => getBackground(props.activated, props.triggered, props.row)}
+  box-shadow: ${(props) =>
+    getBoxShadow(props.activated, props.triggered, props.row)};
+
+  /* Smooth transitions */
+  transition: all ${theme.transitions.fast};
+
+  /* Hover effects */
   &:hover {
-    border-radius: 20px;
-    cursor: pointer;
+    transform: translateY(-1px) scale(1.02);
+    border-radius: ${theme.borderRadius.xl};
+
+    ${(props) => {
+      const trackColor = helpers.getTrackColor(props.row);
+      if (!props.activated) {
+        return `
+          background: linear-gradient(135deg, ${theme.colors.hover}, ${
+          theme.colors.tertiary
+        });
+          border-color: ${trackColor.primary};
+          box-shadow: ${helpers.glow(trackColor.primary, 8)};
+        `;
+      }
+      return `
+        box-shadow: ${helpers.glow(trackColor.primary, 30)};
+      `;
+    }}
   }
 
-  @media (max-width: 860px) {
+  /* Active state (mouse down) */
+  &:active {
+    transform: translateY(0) scale(0.98);
+    transition: all ${theme.transitions.fast};
+  }
+
+  /* Focus for accessibility */
+  ${helpers.focus()}
+
+  /* Velocity indicator for activated cells */
+  ${(props) =>
+    props.activated &&
+    `
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      width: 6px;
+      height: 6px;
+      background: ${helpers.getTrackColor(props.row).secondary};
+      border-radius: 50%;
+      opacity: 0.8;
+    }
+  `}
+  
+  /* Pulse animation for playing cells */
+  @keyframes cellPulse {
+    0% {
+      transform: scale(1);
+      box-shadow: ${(props) =>
+        helpers.glow(helpers.getTrackColor(props.row).primary, 20)};
+    }
+    50% {
+      transform: scale(1.05);
+      box-shadow: ${(props) =>
+        helpers.glow(helpers.getTrackColor(props.row).primary, 35)};
+    }
+    100% {
+      transform: scale(1);
+      box-shadow: ${(props) =>
+        helpers.glow(helpers.getTrackColor(props.row).primary, 25)};
+    }
+  }
+
+  /* Step position indicator - shows current playback position */
+  ${(props) =>
+    props.triggered &&
+    !props.activated &&
+    `
+    &::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background: ${theme.colors.text.secondary};
+      border-radius: 50%;
+      opacity: 0.6;
+      animation: stepPulse 0.3s ease-out;
+    }
+    
+    @keyframes stepPulse {
+      0% { 
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+      }
+      50% { 
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 0.8;
+      }
+      100% { 
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 0.6;
+      }
+    }
+  `}
+
+  /* Mobile responsive sizing */
+  ${theme.media.mobile} {
+    width: ${theme.components.cell.sizeSmall};
+    height: ${theme.components.cell.sizeSmall};
     margin: 1px;
+    border-radius: ${theme.borderRadius.md};
+
+    &:hover {
+      transform: scale(1.05);
+      border-radius: ${theme.borderRadius.lg};
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    border-width: 2px;
+
+    ${(props) =>
+      props.activated &&
+      `
+      border-width: 3px;
+    `}
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+    animation: none;
+
+    &:hover {
+      transform: none;
+    }
+
+    &:active {
+      transform: none;
+    }
   }
 `;
 
