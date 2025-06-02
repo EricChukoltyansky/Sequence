@@ -105,6 +105,7 @@ function Sequencer({ player, socket }) {
   };
 
   const handleBPM = (e) => {
+    setBPMCount(e.target.value); // Add this line
     socket.emit("BPM", { value: e.target.value });
   };
 
@@ -177,17 +178,13 @@ function Sequencer({ player, socket }) {
           playing={playing}
           onClick={() => handleSetPlaying(!playing)}
         />
-
         <StopButton onClick={handleStopPlaying} />
-
         {sequencerVolume === -60 ? (
           <PowerOff onClick={handlePowerOff} />
         ) : (
           <PowerOn onClick={handlePowerOn} />
         )}
-
         <ClearAllButton onClick={handleReset} />
-
         <Volume
           max="4"
           min="-60"
@@ -196,7 +193,6 @@ function Sequencer({ player, socket }) {
           value={sequencerVolume}
           onChange={handleVolume}
         />
-
         <BPM
           max="150"
           min="60"
@@ -205,11 +201,7 @@ function Sequencer({ player, socket }) {
           value={BPMcount}
           onChange={handleBPM}
         />
-
-        <InstructionsButton
-          onMouseEnter={() => setIsShownInstructions(true)}
-          onMouseLeave={() => setIsShownInstructions(false)}
-        />
+        <InstructionsButton onClick={() => setIsShownInstructions(true)} />
         <LoginRegisterButton onClick={handleLoginRegisterClick} />
       </NavBar>
       <RightBar />
@@ -220,7 +212,9 @@ function Sequencer({ player, socket }) {
         handleToggleStep={handleToggleStep}
         handleStopPlaying={handleStopPlaying}
       />
-      {isShownInstructions && <Instructions />}
+      {isShownInstructions && (
+        <Instructions onClose={() => setIsShownInstructions(false)} />
+      )}
       {isShownLogin && (
         <AuthForm
           mode="login"

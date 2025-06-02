@@ -1,5 +1,7 @@
 import React from "react";
 import styled from "styled-components";
+import { theme, helpers } from "../../theme";
+import Instructions from "../Instructions/Instructions";
 
 const Button = styled.button`
   border: 1px solid #fff;
@@ -12,6 +14,7 @@ const Button = styled.button`
   transition: 0.2s ease-in-out;
   font-family: "Fuzzy Bubbles", cursive;
   cursor: pointer;
+  padding: 8px 16px;
 
   &:hover {
     color: #000;
@@ -19,15 +22,18 @@ const Button = styled.button`
     box-shadow: 0px 0px 5px #fff;
     text-shadow: 0px 0px 5px #000;
   }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0px 0px 5px #fff, 0 0 0 2px #fff;
+  }
 `;
 
-function InstructionsButton({ onMouseEnter, onMouseLeave }) {
+function InstructionsButton({ onClick }) {
   return (
-    <>
-      <Button onMouseEnter={onMouseEnter} onMouseLeave={onMouseLeave}>
-        Instructions
-      </Button>
-    </>
+    <Button onClick={onClick} aria-label="Show instructions">
+      Instructions
+    </Button>
   );
 }
 

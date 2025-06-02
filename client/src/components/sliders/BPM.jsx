@@ -1,56 +1,154 @@
 import React from "react";
 import styled from "styled-components";
+import { theme, helpers } from "../../theme";
 
-const Style = {
-  BPM: styled.input`
+const BPMSliderContainer = styled.div`
+  position: relative;
+  width: 120px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  margin: ${theme.spacing.md};
+
+  ${theme.media.mobile} {
+    width: 80px;
+    margin: ${theme.spacing.sm};
+  }
+`;
+
+const BPMSliderLabel = styled.label`
+  position: absolute;
+  top: -20px;
+  left: 0;
+  font-family: ${theme.typography.fontFamily.primary};
+  font-size: ${theme.typography.fontSize.xs};
+  font-weight: ${theme.typography.fontWeight.medium};
+  color: ${theme.colors.text.secondary};
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+`;
+
+const BPMSlider = styled.input`
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: ${theme.components.slider.height};
+  border-radius: ${theme.components.slider.borderRadius};
+  background: linear-gradient(
+    to right,
+    ${theme.colors.status.info} 0%,
+    ${theme.colors.status.info}
+      ${(props) => ((props.value - props.min) / (props.max - props.min)) * 100}%,
+    ${theme.colors.secondary}
+      ${(props) => ((props.value - props.min) / (props.max - props.min)) * 100}%,
+    ${theme.colors.secondary} 100%
+  );
+  outline: none;
+  cursor: pointer;
+  position: relative;
+
+  /* Track styling */
+  &::-webkit-slider-track {
+    height: ${theme.components.slider.height};
+    background: transparent;
+    border: none;
+    border-radius: ${theme.components.slider.borderRadius};
+  }
+
+  &::-moz-range-track {
+    height: ${theme.components.slider.height};
+    background: transparent;
+    border: none;
+    border-radius: ${theme.components.slider.borderRadius};
+  }
+
+  /* Thumb styling */
+  &::-webkit-slider-thumb {
     -webkit-appearance: none;
-    margin-bottom: 15px;
+    appearance: none;
+    width: ${theme.components.slider.thumbSize};
+    height: ${theme.components.slider.thumbSize};
+    border-radius: 50%;
+    background: linear-gradient(135deg, ${theme.colors.status.info}, #42a5f5);
+    box-shadow: ${theme.shadows.md},
+      ${helpers.glow(theme.colors.status.info, 8)};
     cursor: pointer;
-    width: 15%;
-    border-radius: 20px;
-    direction: rtl;
-    margin: 0.5em;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all ${theme.transitions.fast};
+    position: relative;
+  }
 
-    &::-webkit-slider-runnable-track {
-      height: 2px;
-      background: #646464;
-      border: none;
-      border-radius: 22%;
-    }
+  &::-moz-range-thumb {
+    width: ${theme.components.slider.thumbSize};
+    height: ${theme.components.slider.thumbSize};
+    border-radius: 50%;
+    background: linear-gradient(135deg, ${theme.colors.status.info}, #42a5f5);
+    box-shadow: ${theme.shadows.md},
+      ${helpers.glow(theme.colors.status.info, 8)};
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    transition: all ${theme.transitions.fast};
+  }
 
-    &::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      border: none;
-      height: 25px;
-      width: 25px;
-      border-radius: 7px;
-      background: radial-gradient(rgb(121, 231, 238), rgb(3, 154, 168));
-      box-shadow: 0px 0px 3px rgb(3, 154, 168);
-      margin-top: -11.5px;
-      transition: all 0.2s;
-    }
+  /* Hover effects */
+  &:hover::-webkit-slider-thumb {
+    transform: scale(1.1);
+    box-shadow: ${theme.shadows.lg},
+      ${helpers.glow(theme.colors.status.info, 15)};
+  }
 
-    &::-webkit-slider-thumb:hover {
-      box-shadow: 0px 0px 10px rgb(3, 154, 168);
-      border-radius: 20px;
-      cursor: pointer;
-    }
+  &:hover::-moz-range-thumb {
+    transform: scale(1.1);
+    box-shadow: ${theme.shadows.lg},
+      ${helpers.glow(theme.colors.status.info, 15)};
+  }
 
-    &:focus {
-      outline: none;
-    }
-  `,
-};
+  /* Active state */
+  &:active::-webkit-slider-thumb {
+    transform: scale(1.05);
+    box-shadow: ${theme.shadows.xl},
+      ${helpers.glow(theme.colors.status.info, 20)};
+  }
+
+  &:active::-moz-range-thumb {
+    transform: scale(1.05);
+    box-shadow: ${theme.shadows.xl},
+      ${helpers.glow(theme.colors.status.info, 20)};
+  }
+
+  /* Focus for accessibility */
+  ${helpers.focus(theme.colors.status.info)}
+`;
+
+const BPMValue = styled.div`
+  position: absolute;
+  top: -20px;
+  right: 0;
+  font-family: ${theme.typography.fontFamily.mono};
+  font-size: ${theme.typography.fontSize.xs};
+  font-weight: ${theme.typography.fontWeight.medium};
+  color: ${theme.colors.status.info};
+  background: ${theme.colors.primary};
+  padding: 2px 6px;
+  border-radius: ${theme.borderRadius.sm};
+  border: 1px solid ${theme.colors.status.info};
+  min-width: 35px;
+  text-align: center;
+`;
 
 const BPM = ({ max, min, step, type, value, onChange }) => (
-  <Style.BPM
-    max={max}
-    min={min}
-    step={step}
-    type={type}
-    value={value}
-    onChange={onChange}
-  />
+  <BPMSliderContainer>
+    <BPMSliderLabel>Tempo</BPMSliderLabel>
+    <BPMSlider
+      max={max}
+      min={min}
+      step={step}
+      type={type}
+      value={value}
+      onChange={onChange}
+    />
+    <BPMValue>{value}</BPMValue>
+  </BPMSliderContainer>
 );
 
 export default BPM;
