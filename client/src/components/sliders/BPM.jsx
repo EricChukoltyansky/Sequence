@@ -4,11 +4,15 @@ import { theme, helpers } from "../../theme";
 
 const DialContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row; /* Horizontal layout for rotation */
   align-items: center;
+  justify-content: center;
   gap: ${theme.spacing.sm};
-  padding: ${theme.spacing.md};
+  padding: ${theme.spacing.xs};
   position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 `;
 
 const DialLabel = styled.div`
@@ -18,16 +22,19 @@ const DialLabel = styled.div`
   color: ${theme.colors.text.secondary};
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  transform: rotate(-90deg);
+  text-align: center;
   white-space: nowrap;
+  transform: rotate(-90deg); /* Counter-rotate to stay readable */
+  flex-shrink: 0;
 `;
 
 const DialWrapper = styled.div`
   position: relative;
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   cursor: pointer;
   user-select: none;
+  flex-shrink: 0;
 `;
 
 const DialBackground = styled.div`
@@ -56,8 +63,8 @@ const DialTrack = styled.svg`
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 50px;
-  height: 50px;
+  width: 40px; /* Smaller SVG */
+  height: 40px;
 `;
 
 const DialProgress = styled.circle`
@@ -93,8 +100,9 @@ const DialValue = styled.div`
   border: 1px solid ${theme.colors.status.info};
   min-width: 35px;
   text-align: center;
-  transform: rotate(-90deg);
   white-space: nowrap;
+  transform: rotate(-90deg); /* Counter-rotate to stay readable */
+  flex-shrink: 0;
 `;
 
 const BPM = ({ min = 60, max = 150, value, onChange }) => {
@@ -102,6 +110,7 @@ const BPM = ({ min = 60, max = 150, value, onChange }) => {
   const dialRef = useRef(null);
   const startAngleRef = useRef(0);
   const startValueRef = useRef(value);
+  const isDraggingRef = useRef(false); // Use ref for immediate access
 
   // Convert value to angle (240 degrees total range, starting from -120 degrees)
   const valueToAngle = (val) => {
@@ -110,7 +119,7 @@ const BPM = ({ min = 60, max = 150, value, onChange }) => {
   };
 
   // Calculate circumference and dash array for progress ring
-  const radius = 22;
+  const radius = 18; // Smaller radius for smaller dial
   const circumference = 2 * Math.PI * radius;
   const progressPercentage = (value - min) / (max - min);
   const dashArray = `${
@@ -118,20 +127,26 @@ const BPM = ({ min = 60, max = 150, value, onChange }) => {
   } ${circumference}`;
 
   const handleMouseDown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
     setIsDragging(true);
+    isDraggingRef.current = true; // Set ref immediately
+    
     const rect = dialRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
     const centerY = rect.top + rect.height / 2;
     startAngleRef.current =
       Math.atan2(e.clientY - centerY, e.clientX - centerX) * (180 / Math.PI);
     startValueRef.current = value;
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
+    
+    // Use passive: false to ensure we can prevent default
+    document.addEventListener("mousemove", handleMouseMove, { passive: false });
+    document.addEventListener("mouseup", handleMouseUp, { passive: false });
   };
 
   const handleMouseMove = (e) => {
-    if (!isDragging) return;
+    if (!isDraggingRef.current) return;
 
     const rect = dialRef.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -158,11 +173,20 @@ const BPM = ({ min = 60, max = 150, value, onChange }) => {
 
   const handleMouseUp = () => {
     setIsDragging(false);
-    document.removeEventListener("mousemove", handleMouseMove);
-    document.removeEventListener("mouseup", handleMouseUp);
+    isDraggingRef.current = false; // Clear ref immediately
+    document.removeEventListener("mousemove", handleMouseMove, { passive: false });
+    document.removeEventListener("mouseup", handleMouseUp, { passive: false });
   };
 
   const knobAngle = valueToAngle(value);
+
+  // Cleanup effect to ensure no lingering event listeners
+  React.useEffect(() => {
+    return () => {
+      document.removeEventListener("mousemove", handleMouseMove, { passive: false });
+      document.removeEventListener("mouseup", handleMouseUp, { passive: false });
+    };
+  }, []);
 
   return (
     <DialContainer>
@@ -173,29 +197,29 @@ const BPM = ({ min = 60, max = 150, value, onChange }) => {
 
         <DialTrack>
           <circle
-            cx="25"
-            cy="25"
+            cx="20"
+            cy="20"
             r={radius}
             fill="none"
             stroke={theme.colors.border}
             strokeWidth="2"
             strokeDasharray={`${circumference * 0.75} ${circumference}`}
             strokeDashoffset={`${circumference * 0.125}`}
-            transform="rotate(-90 25 25)"
+            transform="rotate(-90 20 20)"
           />
           <DialProgress
-            cx="25"
-            cy="25"
+            cx="20"
+            cy="20"
             r={radius}
             strokeDasharray={dashArray}
             strokeDashoffset={`${circumference * 0.125}`}
-            transform="rotate(-90 25 25)"
+            transform="rotate(-90 20 20)"
           />
         </DialTrack>
 
         <DialKnob
           style={{
-            transform: `translate(-50%, -50%) rotate(${knobAngle}deg) translateY(-20px)`,
+            transform: `translate(-50%, -50%) rotate(${knobAngle}deg) translateY(-16px)`,
           }}
         />
       </DialWrapper>

@@ -1,19 +1,19 @@
 const steps = 16;
 const initialCellState = { triggered: false, activated: false };
 const lineMap = [
-  "CATHFS",
-  "CATEF",
-  "CATCS",
-  "CATAF",
-  "CATFS",
-  "FS",
-  "EF",
-  "CS",
-  "BF",
-  "OH",
-  "CH",
-  "CP",
-  "BD",
+  "F#", // Piano/Trumpet top note
+  "E", // Piano/Trumpet
+  "C#", // Piano/Trumpet
+  "A", // Piano/Trumpet
+  "F#", // Piano/Trumpet bottom note
+  "F#", // Bass top note
+  "E", // Bass
+  "C#", // Bass
+  "B", // Bass bottom note
+  "OH", // Drums - Open Hi-hat
+  "CH", // Drums - Closed Hi-hat
+  "CP", // Drums - Clap/Snare
+  "BD", // Drums - Bass Drum/Kick
 ];
 
 const initialState = lineMap.map(() => {

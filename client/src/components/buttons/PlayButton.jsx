@@ -6,10 +6,7 @@ const TransportButton = styled.button`
   /* Base button styling */
   width: ${theme.components.transport.size};
   height: ${theme.components.transport.size};
-  border-radius: ${(props) =>
-    props.isActive
-      ? theme.borderRadius.md
-      : "50%"}; /* Square when active, round when inactive */
+  border-radius: 50%; /* Always round */
   border: none;
   position: relative;
   cursor: pointer;
@@ -65,8 +62,13 @@ const PlayButtonStyled = styled(TransportButton)`
 
 const PauseButtonStyled = styled(TransportButton)`
   color: ${theme.colors.transport.pause};
-  box-shadow: ${theme.shadows.md},
-    ${helpers.glow(theme.colors.transport.pause, 8)};
+  box-shadow: ${(props) =>
+    props.isActive
+      ? `${theme.shadows.lg}, ${helpers.glow(theme.colors.transport.stop, 15)}`
+      : `${theme.shadows.md}, ${helpers.glow(
+          theme.colors.transport.pause,
+          8
+        )}`};
 
   &:hover {
     box-shadow: ${theme.shadows.lg},

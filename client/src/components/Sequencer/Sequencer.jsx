@@ -1,5 +1,5 @@
 // client/src/components/Sequencer/Sequencer.jsx - Fixed Modern Layout
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import styled from "styled-components";
 import { steps, lineMap, initialState } from "./initial";
 import Grid from "./Grid";
@@ -11,14 +11,13 @@ import BPM from "../sliders/BPM";
 import PowerOn from "../buttons/PowerOn";
 import ClearAllButton from "../buttons/ClearAllButton";
 import PowerOff from "../buttons/PowerOff";
-import RightBar from "../RightBar/RightBar";
 import InstructionsButton from "../buttons/InstructionsButton";
 import Instructions from "../Instructions/Instructions";
 import Icons from "../LeftBar/Icons";
 import Braces from "../LeftBar/Braces";
 import AuthForm from "../Login/Login/AuthForm";
 import LoginRegisterButton from "../buttons/LoginRegister";
-import { theme, helpers } from "../../theme";
+import { theme } from "../../theme";
 
 const SequencerContainer = styled.div`
   width: 100vw;
@@ -61,8 +60,19 @@ const SequencerGrid = styled.div`
   margin-left: 200px; /* Make room for icons and braces */
 
   ${theme.media.mobile} {
-    padding: ${theme.spacing.md};
-    margin-left: 150px;
+    padding: ${theme.spacing.sm};
+    margin-left: 120px;
+  }
+
+  ${theme.media.tablet} {
+    padding: ${theme.spacing.lg};
+    margin-left: 160px;
+  }
+
+  /* Very small screens */
+  @media (max-width: 480px) {
+    margin-left: 80px;
+    padding: ${theme.spacing.xs};
   }
 `;
 
@@ -80,7 +90,13 @@ const ModalOverlay = styled.div`
   z-index: ${theme.zIndex.modal};
 `;
 
-function Sequencer({ player, socket }) {
+function Sequencer({
+  players,
+  socket,
+  loadInstrument,
+  initializeAudio,
+  isAudioReady,
+}) {
   const [sequence, setSequence] = useState(initialState);
   const [playing, setPlaying] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -89,9 +105,17 @@ function Sequencer({ player, socket }) {
   const [isShownInstructions, setIsShownInstructions] = useState(false);
   const [isShownLogin, setIsShownLogin] = useState(false);
   const [isShownRegister, setIsShownRegister] = useState(false);
+  const [bassHit, setBassHit] = useState(false); // Track bass drum hits
+  const [selectedInstruments, setSelectedInstruments] = useState({
+    piano: "piano",
+    bass: "bass",
+    drums: "drums",
+  });
 
   const loginRef = useRef();
   const registerRef = useRef();
+  const audioInitialized = useRef(false);
+  const stepRef = useRef(0);
 
   const handleLoginRegisterClick = () => {
     setIsShownLogin(true);
@@ -104,99 +128,159 @@ function Sequencer({ player, socket }) {
     }
   };
 
-  const resetSequence = () => {
-    for (let i = 0; i < sequence.length; i++) {
-      for (let j = 0; j < sequence[i].length; j++) {
-        sequence[i][j] = { activated: false, triggered: false };
+  // All handler functions now use useCallback with inline logic for better performance
+  const handleToggleStep = useCallback(
+    (i, j) => {
+      setSequence((prevSequence) => {
+        const sequenceCopy = [...prevSequence];
+        const { triggered, activated } = sequenceCopy[i][j];
+        sequenceCopy[i][j] = { triggered, activated: !activated };
+        return sequenceCopy;
+      });
+      socket.emit("arm", { x: i, z: j });
+    },
+    [socket]
+  );
+
+  const handleSetPlaying = useCallback(
+    async (switcher) => {
+      // Initialize audio context on first play
+      if (switcher && !audioInitialized.current && initializeAudio) {
+        await initializeAudio();
+        audioInitialized.current = true;
       }
-    }
-    setSequence(sequence);
-  };
 
-  const stopSequence = () => {
-    const sequenceCopy = [...sequence];
-    for (let i = 0; i < sequenceCopy.length; i++) {
-      for (let j = 0; j < sequenceCopy[i].length; j++) {
-        const { activated } = sequenceCopy[i][j];
-        sequenceCopy[i][j] = { activated, triggered: false };
-      }
-    }
-    setSequence(sequenceCopy);
-  };
+      setPlaying(switcher);
+      socket.emit("switch", { tog: switcher });
+    },
+    [socket, initializeAudio]
+  );
 
-  const toggleStep = (line, step) => {
-    const sequenceCopy = [...sequence];
-    const { triggered, activated } = sequenceCopy[line][step];
-    sequenceCopy[line][step] = { triggered, activated: !activated };
-    setSequence(sequenceCopy);
-  };
-
-  const nextStep = (time) => {
-    for (let i = 0; i < sequence.length; i++) {
-      for (let j = 0; j < sequence[i].length; j++) {
-        const { triggered, activated } = sequence[i][j];
-        sequence[i][j] = { triggered: j === time, activated };
-        if (triggered && activated) {
-          player.volume.value = sequencerVolume;
-          player.player(lineMap[i]).start();
+  const handleStopPlaying = useCallback(() => {
+    setSequence((prevSequence) => {
+      const sequenceCopy = [...prevSequence];
+      for (let i = 0; i < sequenceCopy.length; i++) {
+        for (let j = 0; j < sequenceCopy[i].length; j++) {
+          const { activated } = sequenceCopy[i][j];
+          sequenceCopy[i][j] = { activated, triggered: false };
         }
       }
-    }
-    setSequence(sequence);
-  };
-
-  const handleToggleStep = (i, j) => {
-    socket.emit("arm", { x: i, z: j });
-    socket.emit("sequence", { sequence });
-  };
-
-  const handleSetPlaying = (switcher) => {
-    socket.emit("switch", { tog: switcher });
-  };
-
-  const handleStopPlaying = () => {
+      return sequenceCopy;
+    });
+    stepRef.current = 0;
+    setCurrentStep(0);
+    setPlaying(false);
     socket.emit("rewind");
-  };
+  }, [socket]);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
+    setSequence((prevSequence) => {
+      const sequenceCopy = [...prevSequence];
+      for (let i = 0; i < sequenceCopy.length; i++) {
+        for (let j = 0; j < sequenceCopy[i].length; j++) {
+          sequenceCopy[i][j] = { activated: false, triggered: false };
+        }
+      }
+      return sequenceCopy;
+    });
+    stepRef.current = 0;
+    setCurrentStep(0);
+    setPlaying(false);
     socket.emit("clearAll");
-  };
+  }, [socket]);
 
-  const handleVolume = (e) => {
+  const handleVolume = useCallback((e) => {
     setSequencerVolume(e.target.value);
-  };
+  }, []);
 
-  const handleBPM = (e) => {
-    setBPMCount(e.target.value);
-    socket.emit("BPM", { value: e.target.value });
-  };
+  const handleBPM = useCallback(
+    (e) => {
+      setBPMCount(e.target.value);
+      socket.emit("BPM", { value: e.target.value });
+    },
+    [socket]
+  );
 
-  const handlePowerOn = () => {
+  const handlePowerOn = useCallback(() => {
     setSequencerVolume(-60);
-  };
+  }, []);
 
-  const handlePowerOff = () => {
+  const handlePowerOff = useCallback(() => {
     setSequencerVolume(-12);
-  };
+  }, []);
 
-  // Socket event handlers
+  const handleInstrumentChange = useCallback(
+    async (trackType, instrumentId) => {
+      console.log(`Changing ${trackType} to ${instrumentId}`);
+
+      // Load instrument if not already loaded (wait for it to complete)
+      if (loadInstrument) {
+        try {
+          await loadInstrument(instrumentId);
+          console.log(`${instrumentId} ready to play`);
+        } catch (err) {
+          console.error(`Failed to load instrument ${instrumentId}:`, err);
+        }
+      }
+
+      setSelectedInstruments((prev) => ({
+        ...prev,
+        [trackType]: instrumentId,
+      }));
+
+      // Emit to socket for multiplayer sync
+      socket.emit("instrumentChange", {
+        track: trackType,
+        instrument: instrumentId,
+      });
+    },
+    [socket, loadInstrument]
+  );
+
+  // Socket event handlers - optimized with proper dependencies
   useEffect(() => {
     const toggleMessage = (m) => {
-      toggleStep(m.x, m.z);
+      setSequence((prevSequence) => {
+        const sequenceCopy = [...prevSequence];
+        const { triggered, activated } = sequenceCopy[m.x][m.z];
+        sequenceCopy[m.x][m.z] = { triggered, activated: !activated };
+        return sequenceCopy;
+      });
     };
+
     const playPauseMessage = (m) => {
       setPlaying(m.tog);
     };
+
     const stopMessage = () => {
-      stopSequence();
+      setSequence((prevSequence) => {
+        const sequenceCopy = [...prevSequence];
+        for (let i = 0; i < sequenceCopy.length; i++) {
+          for (let j = 0; j < sequenceCopy[i].length; j++) {
+            const { activated } = sequenceCopy[i][j];
+            sequenceCopy[i][j] = { activated, triggered: false };
+          }
+        }
+        return sequenceCopy;
+      });
       setCurrentStep(0);
       setPlaying(false);
     };
+
     const resetMessage = () => {
-      resetSequence();
+      setSequence((prevSequence) => {
+        const sequenceCopy = [...prevSequence];
+        for (let i = 0; i < sequenceCopy.length; i++) {
+          for (let j = 0; j < sequenceCopy[i].length; j++) {
+            sequenceCopy[i][j] = { activated: false, triggered: false };
+          }
+        }
+        return sequenceCopy;
+      });
       setCurrentStep(0);
       setPlaying(false);
     };
+
     const BPMmessage = (m) => {
       setBPMCount(m.value);
     };
@@ -214,17 +298,99 @@ function Sequencer({ player, socket }) {
       socket.off("clearAll", resetMessage);
       socket.off("BPM", BPMmessage);
     };
-  }, []);
+  }, [socket]);
 
-  // Main sequencer loop and modal handlers
+  // Initialize audio on first user interaction
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (playing) {
-        setCurrentStep((currentStep + 1) % steps);
-        nextStep(currentStep);
+    const handleFirstInteraction = async () => {
+      if (!audioInitialized.current && initializeAudio) {
+        await initializeAudio();
+        audioInitialized.current = true;
+        document.removeEventListener("click", handleFirstInteraction);
+        document.removeEventListener("keydown", handleFirstInteraction);
       }
+    };
+
+    document.addEventListener("click", handleFirstInteraction);
+    document.addEventListener("keydown", handleFirstInteraction);
+
+    return () => {
+      document.removeEventListener("click", handleFirstInteraction);
+      document.removeEventListener("keydown", handleFirstInteraction);
+    };
+  }, [initializeAudio]);
+
+  // Main sequencer loop - using ref to avoid closure issues
+  useEffect(() => {
+    if (!playing) return;
+
+    const timer = setInterval(() => {
+      const currentStepValue = stepRef.current;
+      console.log(`Timer tick - Step: ${currentStepValue}`);
+
+      // Update sequence for visual indicator and play sounds
+      setSequence((prevSequence) => {
+        const sequenceCopy = [...prevSequence];
+
+        for (let i = 0; i < sequenceCopy.length; i++) {
+          for (let j = 0; j < sequenceCopy[i].length; j++) {
+            const { activated } = sequenceCopy[i][j];
+            // Set triggered for current column
+            sequenceCopy[i][j] = { triggered: j === currentStepValue, activated };
+
+            // Play sounds for activated cells at current step
+            if (j === currentStepValue && activated) {
+              let instrumentId;
+              const noteName = lineMap[i];
+
+              if (i <= 4) {
+                instrumentId = selectedInstruments.piano;
+              } else if (i <= 8) {
+                instrumentId = selectedInstruments.bass;
+              } else {
+                instrumentId = selectedInstruments.drums;
+              }
+
+              // Trigger bass hit animation for kick drum (BD)
+              if (noteName === "BD") {
+                setBassHit(true);
+                setTimeout(() => setBassHit(false), 100);
+              }
+
+              console.log(`Playing ${noteName} on ${instrumentId} at step ${currentStepValue}`);
+
+              const instrumentPlayer = players[instrumentId];
+
+              if (instrumentPlayer && instrumentPlayer.loaded) {
+                instrumentPlayer.volume.value = sequencerVolume;
+                const playerNode = instrumentPlayer.player(noteName);
+                if (playerNode && playerNode.loaded) {
+                  playerNode.start();
+                }
+              } else if (players.default) {
+                players.default.volume.value = sequencerVolume;
+                const defaultPlayer = players.default.player(noteName);
+                if (defaultPlayer && defaultPlayer.loaded) {
+                  defaultPlayer.start();
+                }
+              }
+            }
+          }
+        }
+
+        return sequenceCopy;
+      });
+
+      // Advance to next step
+      stepRef.current = (currentStepValue + 1) % steps;
+      setCurrentStep(stepRef.current);
     }, BPMcount);
 
+    return () => clearInterval(timer);
+  }, [playing, BPMcount, players, selectedInstruments, sequencerVolume]);
+
+  // Modal click outside handlers
+  useEffect(() => {
     const handleClickOutside = (event) => {
       if (loginRef.current && !loginRef.current.contains(event.target)) {
         setIsShownLogin(false);
@@ -237,10 +403,9 @@ function Sequencer({ player, socket }) {
     document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
-      clearTimeout(timer);
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [currentStep, playing, BPMcount, sequence]);
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -278,10 +443,19 @@ function Sequencer({ player, socket }) {
 
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [playing, isShownInstructions, sequencerVolume]);
+  }, [
+    playing,
+    isShownInstructions,
+    sequencerVolume,
+    handleSetPlaying,
+    handleStopPlaying,
+    handleReset,
+    handlePowerOff,
+    handlePowerOn,
+  ]);
 
   return (
-    <SequencerContainer>
+    <SequencerContainer playing={playing} bpm={BPMcount}>
       <NavBar>
         <PlayButton
           playing={playing}
@@ -316,7 +490,10 @@ function Sequencer({ player, socket }) {
 
       <MainContent>
         {/* Left side - Instrument Icons (positioned absolutely) */}
-        <Icons />
+        <Icons
+          instruments={selectedInstruments}
+          onInstrumentClick={handleInstrumentChange}
+        />
 
         {/* Left side - Braces with Notes (positioned absolutely) */}
         <Braces />

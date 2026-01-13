@@ -7,18 +7,16 @@ const Grid = ({ sequence, handleToggleStep }) => (
     {sequence.map((line, i) =>
       line.map((time, j) => (
         <Cell
-          key={i + j}
+          key={`${i}-${j}`}
           column={j + 1}
           row={i + 1}
           activated={sequence[i][j].activated}
           triggered={sequence[i][j].triggered}
-          onClick={() => {
-            handleToggleStep(i, j);
-          }}
+          onClick={() => handleToggleStep(i, j)}
         />
       ))
     )}
   </Frame>
 );
 
-export default Grid;
+export default React.memo(Grid);

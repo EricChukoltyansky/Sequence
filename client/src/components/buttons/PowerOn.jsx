@@ -8,10 +8,7 @@ const PowerButtonBase = styled.button`
   /* Base button styling */
   width: ${theme.components.transport.size};
   height: ${theme.components.transport.size};
-  border-radius: ${(props) =>
-    props.isActive
-      ? theme.borderRadius.md
-      : "50%"}; /* Square when active, round when inactive */
+  border-radius: 50%; /* Always round */
   border: none;
   position: relative;
   cursor: pointer;
@@ -56,7 +53,10 @@ const PowerButtonBase = styled.button`
 
 const PowerOnStyled = styled(PowerButtonBase)`
   color: #0b996a;
-  box-shadow: ${theme.shadows.md}, ${helpers.glow("#0b996a", 8)};
+  box-shadow: ${(props) =>
+    props.isActive
+      ? `${theme.shadows.lg}, ${helpers.glow(theme.colors.transport.stop, 15)}`
+      : `${theme.shadows.md}, ${helpers.glow("#0b996a", 8)}`};
 
   &:hover {
     box-shadow: ${theme.shadows.lg}, ${helpers.glow("#0b996a", 15)};
@@ -65,7 +65,10 @@ const PowerOnStyled = styled(PowerButtonBase)`
 
 const PowerOffStyled = styled(PowerButtonBase)`
   color: #922c2c;
-  box-shadow: ${theme.shadows.md}, ${helpers.glow("#922c2c", 8)};
+  box-shadow: ${(props) =>
+    props.isActive
+      ? `${theme.shadows.lg}, ${helpers.glow(theme.colors.transport.stop, 15)}`
+      : `${theme.shadows.md}, ${helpers.glow("#922c2c", 8)}`};
 
   &:hover {
     box-shadow: ${theme.shadows.lg}, ${helpers.glow("#922c2c", 15)};

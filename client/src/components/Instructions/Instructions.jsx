@@ -34,7 +34,7 @@ const ModalOverlay = styled.div`
 const ModalContainer = styled.div`
   width: 100%;
   max-width: 600px;
-  max-height: 80vh;
+  max-height: 85vh;
   overflow-y: auto;
   position: relative;
 
@@ -69,6 +69,19 @@ const ModalContainer = styled.div`
     max-width: 95vw;
     max-height: 90vh;
     margin: ${theme.spacing.sm};
+    border-radius: ${theme.borderRadius.lg};
+  }
+  
+  /* Very small screens */
+  @media (max-width: 480px) {
+    max-width: 98vw;
+    max-height: 95vh;
+    margin: ${theme.spacing.xs};
+  }
+  
+  /* Short screens */
+  @media (max-height: 600px) {
+    max-height: 95vh;
   }
 `;
 

@@ -45,7 +45,18 @@ const NavBarContainer = styled.div`
 
   ${theme.media.mobile} {
     width: 100px;
-    padding: ${theme.spacing.lg} ${theme.spacing.sm};
+    padding: ${theme.spacing.md} ${theme.spacing.sm};
+  }
+  
+  /* Very small screens */
+  @media (max-width: 480px) {
+    width: 80px;
+    padding: ${theme.spacing.sm} ${theme.spacing.xs};
+  }
+  
+  /* Short screens */
+  @media (max-height: 600px) {
+    padding: ${theme.spacing.md} ${theme.spacing.sm};
   }
 
   /* Animation on mount */
@@ -67,13 +78,26 @@ const ControlsContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  gap: ${theme.spacing.xl};
+  gap: ${theme.spacing.lg};
   width: 100%;
+  min-height: 0; /* Allow flex shrinking */
+  overflow-y: auto; /* Enable scrolling if needed */
 
   ${theme.media.mobile} {
-    gap: ${theme.spacing.lg};
+    gap: ${theme.spacing.md};
+  }
+  
+  /* Very small screens - reduce gaps further */
+  @media (max-width: 480px) {
+    gap: ${theme.spacing.sm};
+  }
+  
+  /* Short screens - ensure content fits */
+  @media (max-height: 600px) {
+    gap: ${theme.spacing.sm};
+    justify-content: space-evenly;
   }
 `;
 
@@ -112,13 +136,17 @@ const BrandSection = styled.div`
   flex-direction: column;
   align-items: center;
   gap: ${theme.spacing.sm};
-  margin-bottom: ${theme.spacing.xl};
-  position: sticky;
-  top: 0;
+  margin-bottom: ${theme.spacing.lg};
+  flex-shrink: 0; /* Prevent shrinking */
 
   ${theme.media.mobile} {
-    margin-bottom: ${theme.spacing.lg};
+    margin-bottom: ${theme.spacing.md};
     gap: ${theme.spacing.xs};
+  }
+  
+  /* Short screens - reduce margin */
+  @media (max-height: 600px) {
+    margin-bottom: ${theme.spacing.sm};
   }
 `;
 
@@ -199,14 +227,34 @@ const StatusIndicator = styled.div`
 const RotatedSliderContainer = styled.div`
   transform: rotate(90deg);
   transform-origin: center;
-  width: 120px;
-  height: 40px;
-  margin: 50px 0; /* Account for rotation and spacing */
+  width: 90px; /* Increased to give more room for text */
+  height: 90px; /* Match width for square rotation */
+  margin: 35px 0; /* Slightly more margin for text space */
+  overflow: visible; /* Allow text to extend if needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto; /* Ensure mouse events work */
+  
+  /* Debug - temporary background to see container */
+  /* background: rgba(255, 0, 0, 0.1); */
 
   ${theme.media.mobile} {
     width: 80px;
-    height: 30px;
-    margin: 40px 0;
+    height: 80px;
+    margin: 30px 0;
+  }
+  
+  /* Very small screens - reduce margins further */
+  @media (max-width: 480px) {
+    width: 70px;
+    height: 70px;
+    margin: 25px 0;
+  }
+  
+  /* Short screens - minimal margins */
+  @media (max-height: 600px) {
+    margin: 25px 0;
   }
 `;
 

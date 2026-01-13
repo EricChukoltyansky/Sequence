@@ -15,8 +15,14 @@ const BracesContainer = styled.div`
   z-index: ${theme.zIndex.base + 1};
 
   ${theme.media.mobile} {
-    left: 120px;
-    width: 100px;
+    left: 110px;
+    width: 90px;
+  }
+  
+  /* Very small screens */
+  @media (max-width: 480px) {
+    left: 80px;
+    width: 70px;
   }
 `;
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { io } from "socket.io-client";
-import PlayerProvider from "./components/context/PlayerProvider";
+import PlayerProvider from "./components/context/PlayerProviderHowler";
 import Sequencer from "./components/Sequencer/Sequencer";
 import Loader from "./components/Loader/Loader";
 import Rotate from "./components/Rotate/Rotate";
@@ -55,14 +55,26 @@ function App() {
             path="/"
             element={
               <PlayerProvider>
-                {({ player }) => {
-                  if (!player) {
+                {({
+                  players,
+                  loadInstrument,
+                  isLoading,
+                  initializeAudio,
+                  isAudioReady,
+                }) => {
+                  if (!players || isLoading) {
                     return <Loader />;
                   }
                   return orientation === "portrait-primary" ? (
                     <Rotate />
                   ) : (
-                    <Sequencer player={player} socket={socket} />
+                    <Sequencer
+                      players={players}
+                      socket={socket}
+                      loadInstrument={loadInstrument}
+                      initializeAudio={initializeAudio}
+                      isAudioReady={isAudioReady}
+                    />
                   );
                 }}
               </PlayerProvider>

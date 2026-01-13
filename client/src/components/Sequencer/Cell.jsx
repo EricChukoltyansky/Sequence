@@ -1,3 +1,4 @@
+import React from "react";
 import styled from "styled-components";
 import { theme, helpers } from "../../theme";
 
@@ -226,4 +227,11 @@ const Cell = styled.div.attrs(({ activated, triggered, row }) => ({
   }
 `;
 
-export default Cell;
+export default React.memo(Cell, (prevProps, nextProps) => {
+  return (
+    prevProps.activated === nextProps.activated &&
+    prevProps.triggered === nextProps.triggered &&
+    prevProps.row === nextProps.row &&
+    prevProps.column === nextProps.column
+  );
+});

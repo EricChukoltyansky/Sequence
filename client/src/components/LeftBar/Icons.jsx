@@ -1,9 +1,43 @@
 // client/src/components/LeftBar/Icons.jsx - Modern Icons Component
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
-import { GiDrumKit, GiGuitarBassHead } from "react-icons/gi";
+import {
+  GiDrumKit,
+  GiGuitarBassHead,
+  GiViolin,
+  GiSaxophone,
+  GiTrumpet,
+  GiFlute,
+  GiGrandPiano,
+  GiGuitar,
+  GiClarinet,
+  GiHarp,
+  GiMusicalKeyboard,
+  GiBanjo,
+} from "react-icons/gi";
 import { CgPiano } from "react-icons/cg";
-import { theme, helpers } from "../../theme";
+import { FaGuitar, FaDrum } from "react-icons/fa";
+import { theme } from "../../theme";
+import InstrumentPicker from "../InstrumentPicker/InstrumentPicker";
+
+// Instrument definitions mapping
+const instrumentData = {
+  piano: { name: "Piano", icon: CgPiano },
+  "grand-piano": { name: "Grand Piano", icon: GiGrandPiano },
+  keyboard: { name: "Keyboard", icon: GiMusicalKeyboard },
+  guitar: { name: "Guitar", icon: FaGuitar },
+  "electric-guitar": { name: "Electric Guitar", icon: GiGuitar },
+  banjo: { name: "Banjo", icon: GiBanjo },
+  bass: { name: "Bass", icon: GiGuitarBassHead },
+  drums: { name: "Drums", icon: GiDrumKit },
+  percussion: { name: "Percussion", icon: FaDrum },
+  violin: { name: "Violin", icon: GiViolin },
+  saxophone: { name: "Saxophone", icon: GiSaxophone },
+  trumpet: { name: "Trumpet", icon: GiTrumpet },
+  flute: { name: "Flute", icon: GiFlute },
+  clarinet: { name: "Clarinet", icon: GiClarinet },
+  harp: { name: "Harp", icon: GiHarp },
+};
 
 const IconsContainer = styled.div`
   position: absolute;
@@ -18,11 +52,17 @@ const IconsContainer = styled.div`
 
   ${theme.media.mobile} {
     left: 15px;
-    width: 90px;
+    width: 80px;
+  }
+
+  /* Very small screens */
+  @media (max-width: 480px) {
+    left: 10px;
+    width: 60px;
   }
 `;
 
-const IconGroup = styled.div`
+const IconGroup = styled.button`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -39,6 +79,7 @@ const IconGroup = styled.div`
   backdrop-filter: blur(10px);
   transition: all ${theme.transitions.normal};
   position: relative;
+  cursor: pointer;
 
   /* Height to match brace sections proportionally */
   &:nth-child(1) {
@@ -104,45 +145,103 @@ const InstrumentLabel = styled.span`
   }
 `;
 
-const TrackCount = styled.div`
+const ClickHint = styled.div`
   font-family: ${theme.typography.fontFamily.mono};
   font-size: ${theme.typography.fontSize.xs};
   color: ${theme.colors.text.muted};
-  background: rgba(255, 255, 255, 0.05);
-  padding: 2px 6px;
-  border-radius: ${theme.borderRadius.sm};
-  margin-top: ${theme.spacing.xs};
+  opacity: 0;
+  transition: opacity ${theme.transitions.normal};
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  pointer-events: none;
+
+  ${IconGroup}:hover & {
+    opacity: 0.7;
+  }
 `;
 
-export default function Icons() {
+export default function Icons({ instruments, onInstrumentClick }) {
+  const [showPicker, setShowPicker] = useState(false);
+  const [selectedTrack, setSelectedTrack] = useState(null);
+
+  const handleIconClick = (trackType) => {
+    setSelectedTrack(trackType);
+    setShowPicker(true);
+  };
+
+  const handleSelectInstrument = (trackType, instrumentId) => {
+    if (onInstrumentClick) {
+      onInstrumentClick(trackType, instrumentId);
+    }
+  };
+
+  const getCurrentInstrument = (trackType) => {
+    return instruments?.[trackType] || trackType;
+  };
+
+  const getInstrumentData = (trackType) => {
+    const instrumentId = getCurrentInstrument(trackType);
+    return instrumentData[instrumentId] || instrumentData[trackType];
+  };
+
+  const pianoInstrument = getInstrumentData("piano");
+  const bassInstrument = getInstrumentData("bass");
+  const drumsInstrument = getInstrumentData("drums");
+
   return (
-    <IconsContainer>
-      <IconGroup color={theme.colors.tracks.piano.primary}>
-        <InstrumentIcon color={theme.colors.tracks.piano.primary}>
-          <CgPiano />
-        </InstrumentIcon>
-        <InstrumentLabel color={theme.colors.tracks.piano.primary}>
-          Piano
-        </InstrumentLabel>
-      </IconGroup>
+    <>
+      <IconsContainer>
+        <IconGroup
+          color={theme.colors.tracks.piano.primary}
+          onClick={() => handleIconClick("piano")}
+        >
+          <InstrumentIcon color={theme.colors.tracks.piano.primary}>
+            <pianoInstrument.icon />
+          </InstrumentIcon>
+          <InstrumentLabel color={theme.colors.tracks.piano.primary}>
+            {pianoInstrument.name}
+          </InstrumentLabel>
+          <ClickHint>Click to change</ClickHint>
+        </IconGroup>
 
-      <IconGroup color={theme.colors.tracks.bass.primary}>
-        <InstrumentIcon color={theme.colors.tracks.bass.primary}>
-          <GiGuitarBassHead />
-        </InstrumentIcon>
-        <InstrumentLabel color={theme.colors.tracks.bass.primary}>
-          Bass
-        </InstrumentLabel>
-      </IconGroup>
+        <IconGroup
+          color={theme.colors.tracks.bass.primary}
+          onClick={() => handleIconClick("bass")}
+        >
+          <InstrumentIcon color={theme.colors.tracks.bass.primary}>
+            <bassInstrument.icon />
+          </InstrumentIcon>
+          <InstrumentLabel color={theme.colors.tracks.bass.primary}>
+            {bassInstrument.name}
+          </InstrumentLabel>
+          <ClickHint>Click to change</ClickHint>
+        </IconGroup>
 
-      <IconGroup color={theme.colors.tracks.drums.primary}>
-        <InstrumentIcon color={theme.colors.tracks.drums.primary}>
-          <GiDrumKit />
-        </InstrumentIcon>
-        <InstrumentLabel color={theme.colors.tracks.drums.primary}>
-          Drums
-        </InstrumentLabel>
-      </IconGroup>
-    </IconsContainer>
+        <IconGroup
+          color={theme.colors.tracks.drums.primary}
+          onClick={() => handleIconClick("drums")}
+        >
+          <InstrumentIcon color={theme.colors.tracks.drums.primary}>
+            <drumsInstrument.icon />
+          </InstrumentIcon>
+          <InstrumentLabel color={theme.colors.tracks.drums.primary}>
+            {drumsInstrument.name}
+          </InstrumentLabel>
+          <ClickHint>Click to change</ClickHint>
+        </IconGroup>
+      </IconsContainer>
+
+      {showPicker && (
+        <InstrumentPicker
+          onClose={() => setShowPicker(false)}
+          trackType={selectedTrack}
+          currentInstrument={getCurrentInstrument(selectedTrack)}
+          onSelectInstrument={handleSelectInstrument}
+        />
+      )}
+    </>
   );
 }

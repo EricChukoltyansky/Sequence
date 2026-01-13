@@ -7,10 +7,7 @@ const StopButtonStyled = styled.button`
   /* Base button styling */
   width: ${theme.components.transport.size};
   height: ${theme.components.transport.size};
-  border-radius: ${(props) =>
-    props.isActive
-      ? theme.borderRadius.md
-      : "50%"}; /* Square when active, round when inactive */
+  border-radius: 50%; /* Always round */
   border: none;
   position: relative;
   cursor: pointer;
@@ -27,8 +24,10 @@ const StopButtonStyled = styled.button`
   color: ${theme.colors.transport.stop};
 
   /* Glow effect */
-  box-shadow: ${theme.shadows.md},
-    ${helpers.glow(theme.colors.transport.stop, 8)};
+  box-shadow: ${(props) =>
+    props.isActive
+      ? `${theme.shadows.lg}, ${helpers.glow(theme.colors.transport.stop, 15)}`
+      : `${theme.shadows.md}, ${helpers.glow(theme.colors.transport.stop, 8)}`};
 
   /* Smooth transitions */
   ${helpers.transition("all", theme.transitions.normal)}
