@@ -1,0 +1,537 @@
+/* 
+🎯 REPLACE: client/src/components/Sequencer/Sequencer.css 
+Complete updated CSS with new layout structure
+*/
+
+.Sequencer {
+  height: 100vh;
+  width: 100vw;
+  background: #0f0f0f;
+
+  /* Subtle dot pattern background - same as loader */
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+
+  position: relative;
+  overflow: hidden;
+}
+
+.Sequencer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Optional: Add a very subtle vignette effect */
+  background: radial-gradient(
+    ellipse at center,
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 100%
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 
+🎯 VERTICAL NAVBAR LAYOUT - Full Screen Grid
+*/
+
+.Sequencer {
+  height: 100vh;
+  width: 100vw;
+  background: #1c1c1e;
+
+  /* Keep the nice dot pattern */
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(255, 255, 255, 0.08) 1px,
+    transparent 0
+  );
+  background-size: 20px 20px;
+
+  /* Full screen layout */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.seqContainer {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+/* ============================================================================
+   INSTRUCTIONS MODAL - Modern Design
+   ============================================================================ */
+.instructions {
+  height: 70vh;
+  width: 80vw;
+  max-width: 800px;
+  max-height: 600px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 60px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  margin: 0 auto;
+  z-index: 999;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  /* Smooth animations */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: modalSlideIn 0.5s ease-out;
+
+  overflow: hidden;
+  padding: 0;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.instructions::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ffd700 0%, #00bfff 50%, #ff1493 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.instructions h1 {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 2rem auto 1rem;
+  padding: 0 2rem;
+
+  /* Gradient text effect */
+  background: linear-gradient(135deg, #ffd700 0%, #00bfff 50%, #ff1493 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  text-shadow: none;
+  letter-spacing: -0.02em;
+}
+
+.instructions ul {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #b3b3b3;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.8;
+  text-align: left;
+  margin: 0;
+  padding: 0 2rem 2rem;
+  list-style: none;
+
+  max-height: calc(70vh - 120px);
+  overflow-y: auto;
+
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.instructions ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.instructions ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.instructions ul::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.instructions ul::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.instructions li {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  padding-left: 3rem;
+}
+
+.instructions li:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.instructions li::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: #00bfff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+}
+
+.instructions li:nth-child(3n + 1)::before {
+  background: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.instructions li:nth-child(3n + 2)::before {
+  background: #ff1493;
+  box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+}
+
+/* Strong text styling */
+.instructions strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .instructions {
+    width: 95vw;
+    height: 85vh;
+    border-radius: 16px;
+  }
+
+  .instructions h1 {
+    font-size: 2rem;
+    margin: 1.5rem auto 1rem;
+  }
+
+  .instructions ul {
+    font-size: 1rem;
+    padding: 0 1rem 1rem;
+  }
+
+  .instructions li {
+    padding: 0.8rem;
+    padding-left: 2.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================================================ */
+
+/* Focus styles for keyboard navigation */
+.Sequencer *:focus {
+  outline: 2px solid #00bfff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .instructions {
+    background: #000000;
+    border: 2px solid #ffffff;
+  }
+
+  .instructions h1 {
+    -webkit-text-fill-color: #ffffff;
+    background: none;
+  }
+
+  .instructions ul {
+    color: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .instructions {
+    animation: none;
+    transition: none;
+  }
+
+  .instructions li {
+    transition: none;
+  }
+
+  .instructions li:hover {
+    transform: none;
+  }
+
+  .Sequencer::before {
+    animation: none;
+  }
+}
+
+.seqContainer {
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  position: relative;
+  z-index: 2;
+}
+
+/* ============================================================================
+   INSTRUCTIONS MODAL - Modern Design
+   ============================================================================ */
+.instructions {
+  height: 70vh;
+  width: 80vw;
+  max-width: 800px;
+  max-height: 600px;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%
+  );
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 60px rgba(255, 255, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+
+  margin: 0 auto;
+  z-index: 999;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  /* Smooth animations */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: modalSlideIn 0.5s ease-out;
+
+  overflow: hidden;
+  padding: 0;
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -60%) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.instructions::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #ffd700 0%, #00bfff 50%, #ff1493 100%);
+  border-radius: 20px 20px 0 0;
+}
+
+.instructions h1 {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #ffffff;
+  font-size: 2.5rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 2rem auto 1rem;
+  padding: 0 2rem;
+
+  /* Gradient text effect */
+  background: linear-gradient(135deg, #ffd700 0%, #00bfff 50%, #ff1493 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+
+  text-shadow: none;
+  letter-spacing: -0.02em;
+}
+
+.instructions ul {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  color: #b3b3b3;
+  font-size: 1.1rem;
+  font-weight: 400;
+  line-height: 1.8;
+  text-align: left;
+  margin: 0;
+  padding: 0 2rem 2rem;
+  list-style: none;
+
+  max-height: calc(70vh - 120px);
+  overflow-y: auto;
+
+  /* Custom scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
+
+.instructions ul::-webkit-scrollbar {
+  width: 6px;
+}
+
+.instructions ul::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.instructions ul::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.instructions ul::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.instructions li {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  position: relative;
+  padding-left: 3rem;
+}
+
+.instructions li:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.instructions li::before {
+  content: "";
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background: #00bfff;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.5);
+}
+
+.instructions li:nth-child(3n + 1)::before {
+  background: #ffd700;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.instructions li:nth-child(3n + 2)::before {
+  background: #ff1493;
+  box-shadow: 0 0 10px rgba(255, 20, 147, 0.5);
+}
+
+/* Strong text styling */
+.instructions strong {
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .instructions {
+    width: 95vw;
+    height: 85vh;
+    border-radius: 16px;
+  }
+
+  .instructions h1 {
+    font-size: 2rem;
+    margin: 1.5rem auto 1rem;
+  }
+
+  .instructions ul {
+    font-size: 1rem;
+    padding: 0 1rem 1rem;
+  }
+
+  .instructions li {
+    padding: 0.8rem;
+    padding-left: 2.5rem;
+    margin-bottom: 1rem;
+  }
+}
+
+/* ============================================================================
+   ACCESSIBILITY ENHANCEMENTS
+   ============================================================================ */
+
+/* Focus styles for keyboard navigation */
+.Sequencer *:focus {
+  outline: 2px solid #00bfff;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .instructions {
+    background: #000000;
+    border: 2px solid #ffffff;
+  }
+
+  .instructions h1 {
+    -webkit-text-fill-color: #ffffff;
+    background: none;
+  }
+
+  .instructions ul {
+    color: #ffffff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .instructions {
+    animation: none;
+    transition: none;
+  }
+
+  .instructions li {
+    transition: none;
+  }
+
+  .instructions li:hover {
+    transform: none;
+  }
+}
