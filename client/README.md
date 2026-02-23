@@ -100,3 +100,18 @@ If you have any feedback, please reach out to us at erik.chukoltyansky@gmail.com
 
 **Server:** Node, Express, Socket.io
 
+
+<!-- TODO -->
+
+1. Option to expand and minimize the matrix
+2. Record any stream of music
+3. Organize the rooms
+4. Row config per note
+5. Config sliders touch
+6. Volume/tempo slider
+7. Responsivity
+8. Option to increase or decrease notes per instrument
+9. Change notes per row
+10. Option to increase or decrease instruments
+11. Think of a name for this shit
+
